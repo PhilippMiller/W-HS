@@ -22,7 +22,7 @@ public class Main {
 		System.out.println("################################");
 		
 		System.out.print("\n\nWie viele Schubladen hat dein Schrank: ");
-		AnzahlFächer = io.read_int();
+		AnzahlFächer = io.read_int(); 
 		Schubladen = new int[AnzahlFächer];
 		
 		Schrank.buildIt(Schubladen);

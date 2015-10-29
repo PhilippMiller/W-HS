@@ -32,7 +32,7 @@ public class BauDenSchrank
 			
 		}
 		
-		InhaltGesamt = InhaltGesamt - 2;
+		InhaltGesamt = InhaltGesamt - 2; 
 		
 		System.out.print("o");
 		while( InhaltGesamt > InhaltGesamt_add)

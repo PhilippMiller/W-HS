@@ -7,7 +7,7 @@ public class BauDenSchrank
 		
 		String Inhalt;
 		int InhaltGesamt = 0;
-		int InhaltGesamt_add = 0;
+		int InhaltGesamt_add = 0; 
 		
 		
 		System.out.println("\nDein Schrank");

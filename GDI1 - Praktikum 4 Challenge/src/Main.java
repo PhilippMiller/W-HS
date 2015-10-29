@@ -53,7 +53,7 @@ public class Main {
 				if (wahlSchublade <= 4)
 				{
 				//Siehe Punkt ENDE
-					fachx = wahlSchublade;
+					fachx = wahlSchublade; 
 					fachx = fachx/2;
 					double fachy = Math.ceil(fachx);
 					fachx = (fachx*100) % 100 /10;
