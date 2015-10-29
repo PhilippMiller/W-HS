@@ -10,7 +10,7 @@ public class BauDenSchrank
 		int InhaltGesamt_add = 0;
 		
 		
-		System.out.println("\nDein Schrank");
+		System.out.println("\nDein Lager");
 		
 		for(int i = 0; Schubladen.length > i; i++)
 		{
