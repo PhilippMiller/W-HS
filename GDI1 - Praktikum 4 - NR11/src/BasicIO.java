@@ -174,16 +174,4 @@ class io
 		
 		return antwort;
 	}	
-}			
-								
-
-
-
-
-
-
-
-
-
-
-
+}

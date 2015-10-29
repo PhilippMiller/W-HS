@@ -9,9 +9,11 @@ public class Main {
 		boolean exit = false;
 		boolean bearbeiten = false;
 		String antwort;
-		int[] Schubladen = {0,0,0,0};
+		int[] Schubladen;
 		int neueAnzahl;
 		boolean neueAnzahlG1 = false;
+		int AnzahlFächer = 0;
+		boolean maxFach = false;
 		
 		
 		System.out.println("################################");
@@ -19,13 +21,31 @@ public class Main {
 		System.out.println("  Dein Schrank wird geöffnet...");
 		System.out.println("################################");
 		
+		System.out.print("\n\nWie viele Schubladen hat dein Schrank: ");
+		AnzahlFächer = io.read_int(); 
+		Schubladen = new int[AnzahlFächer];
+		
 		Schrank.buildIt(Schubladen);
 		
 		while (exit == false)
 		{
-			System.out.print("Bitte eines der vier Schrankfächer auswählen: ");
-			wahlSchublade = io.read_int_1234();
-			wahlSchublade = wahlSchublade -1;
+			System.out.print("Bitte ein Schrankfach zwischen 1 und " + AnzahlFächer + " aus: ");
+			
+			do
+			{
+				wahlSchublade = io.read_int();
+				wahlSchublade = wahlSchublade -1;
+				if (wahlSchublade <= AnzahlFächer-1)
+				{
+					maxFach = true;
+				}
+				else
+				{
+					System.out.println("\nDas Fach " + wahlSchublade + " existiert nicht! (1 - " + AnzahlFächer + ")");
+					System.out.print("Bitte ein Schrankfach zwischen 1 und " + AnzahlFächer + " aus: ");
+				}
+			}
+			while (maxFach == false);
 			
 			System.out.println("Im Fach " + (wahlSchublade + 1) + " befinden sich " + Schubladen[wahlSchublade] + " T-Shirts.");
 			while (bearbeiten == false)
