@@ -27,10 +27,10 @@ public class Main {
 		anzahlFächer = 2;
 		lager = new int[anzahlRegale][anzahlFächer];
 
-		lagerGebäude.buildIt(lager);
 
 		boolean exit = false;
 		while (exit == false) {
+			lagerGebäude.buildIt(lager);
 			// Siehe Punkt "Da nicht anders gefordert!"
 			System.out.println("Linke Seite:");
 			System.out.println("\t\t- Flache, helle  Schuhe:\tFach Nr. [1]");
