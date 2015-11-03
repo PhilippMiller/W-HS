@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public class Primzahlen {
 
-	public void Primzahlen() {
+	public void PrimzahlenChecker() {
 		int zahl = 1;
 		int zahl2;
 		int summe = 0;
