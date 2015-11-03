@@ -4,37 +4,63 @@ public class Geldchecker {
 	public void geldCheck() {
 
 		String Eingabe = "";
-		String derEingabeString[];
 		
 		System.out.println("Bitte eine Seriennummer Eingeben");
 		System.out.print("=> ");
 		Eingabe = io.read_String();
 		
-		char land = Eingabe.charAt(0);
-		String neueEingabe = "" + (int)land; //2 STELLIG!
-		char ablöseNeueEingabe[] = neueEingabe.toCharArray();
-		neueEingabe = "";
+		//LAND ZIFFER EINLESEN
+		char landesZiffer = Eingabe.charAt(0);
 		
-		for (int i = 0; i < ablöseNeueEingabe.length; i++){
-			neueEingabe = neueEingabe + ablöseNeueEingabe[i];
-		}
+		//LANDES ZIFFER GROSS MACHEN! (bsp. z = Z)
+		String machGross = "" + landesZiffer;
+		machGross = machGross.toUpperCase(); //<--- Wird nachher nochmal wichtig für die Ausgabe!
+		landesZiffer = machGross.charAt(0);
 		
+		//LAND ZIFFER ALS "int" IN DEN STRING EINLESEN
+		String neueEingabe = "" + (int)landesZiffer; //2 STELLIG!
+		
+		//DIE VORHERIGE EINGABE (OHNE DEN BUCHSTABEN i=1) EINLESEN!
 		for (int i = 1; i < Eingabe.length(); i++){
 			neueEingabe = neueEingabe + Eingabe.charAt(i);
 		}
 		
-		for (int i = 0; i < neueEingabe.length()){
-			derEingabeString[i] = neueEingabe[i];
-		}
-		derEingabeString = neueEingabe.toCharArray();
-		System.out.println(derEingabeString.length);
+		String derUmrechenString = "";
+		int prüfzifferBestimmung = 0;
 		
-		int quersumme = 0;
-		for (int i = 0; i < derEingabeString.length; i++){
-			quersumme = quersumme + Integer.parseInt(s));
+		//QUERSUMME BERECHNEN [Integer.parseInt(x) - wandelt String in int um]
+		for (int i = 0; i < neueEingabe.length(); i++){
+			derUmrechenString = "" + neueEingabe.charAt(i);
+			prüfzifferBestimmung = prüfzifferBestimmung + Integer.parseInt(derUmrechenString);
 		}
-		System.out.println(quersumme);
-
+		
+		//MIT REST TEILEN [MODULO]
+		prüfzifferBestimmung = prüfzifferBestimmung % 9;
+		prüfzifferBestimmung = 8 - prüfzifferBestimmung;
+		
+		if (prüfzifferBestimmung == 0){
+			prüfzifferBestimmung = 9;
+		}
+		
+		//LANDES BESTIMMUNG
+		String land;
+		if (machGross.equals("Z")) land = "Belgien";
+		else if (machGross.equals("Y")) land = "Griechenland";
+		else if (machGross.equals("X"))	land = "Deutschland";
+		else if (machGross.equals("V")) land = "Spanien";
+		else if (machGross.equals("U")) land = "Frankreich";
+		else if (machGross.equals("T")) land = "Irland";
+		else if (machGross.equals("S")) land = "Italien";
+		else if (machGross.equals("P")) land = "der Niederlande";
+		else if (machGross.equals("N")) land = "Österreich";
+		else if (machGross.equals("M")) land = "Porugal";
+		else if (machGross.equals("L")) land = "Finnland";
+		else land = "#ERROR UNBEKANNTES LAND#";
+		
+		System.out.println("Die Prüfzimmer des aus " + land + " stammenden Geldscheines,");
+		System.out.println("mit der Seriennummer " + Eingabe + " hat die Prüfziffer: " + prüfzifferBestimmung);
+		System.out.println("\nDie vollständige Seriennummer lautet: " + Eingabe + prüfzifferBestimmung);
+		
 	}
 
 }
