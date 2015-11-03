@@ -11,6 +11,9 @@ public class Main
 		if (programm == 1){
 			Primzahlen go = new Primzahlen();
 			go.Primzahlen();
+		}else if (programm == 2){
+			Geldchecker go = new Geldchecker();
+			go.geldCheck();
 		}
 	}
 
