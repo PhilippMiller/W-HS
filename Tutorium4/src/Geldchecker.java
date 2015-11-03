@@ -86,7 +86,7 @@ public class Geldchecker {
 
 		System.out.println("Die Prüfzimmer des aus " + land + " stammenden Geldscheines,");
 		System.out.println("mit der Seriennummer " + Eingabe + " hat die Prüfziffer: " + prüfzifferBestimmung);
-		System.out.println("\nDie vollständige Seriennummer lautet: " + alphabet[landesNummer-1] + " " + serienNummerAusgabeOhneBuchstabe + " " + prüfzifferBestimmung);
+		System.out.println("\nDie vollständige Seriennummer lautet: " + alphabet[landesNummer-1] + serienNummerAusgabeOhneBuchstabe + prüfzifferBestimmung);
 
 	}
 
