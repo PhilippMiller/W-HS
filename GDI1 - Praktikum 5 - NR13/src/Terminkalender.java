@@ -92,7 +92,6 @@ public class Terminkalender
 			
 		}		
 		
-		// Hier muss etwas eingetragen werden!!!!!
 		for (int i = 0; i < terminkalender.length; i++){
 			for (int j = 0; j < terminkalender[i].length; j++){
 				
@@ -104,7 +103,7 @@ public class Terminkalender
 				}
 			}
 		}
-		// Hier muss etwas eingetragen werden!!!!!
+		
 	}
 
 }
