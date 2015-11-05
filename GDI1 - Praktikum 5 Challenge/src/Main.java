@@ -68,18 +68,11 @@ public class Main {
 			// nicht direkt aneinander stoﬂen - vertikal, horizontal und
 			// diagonal
 
-			System.out.println("#############");
-			System.out.println("# S in zeile: " + zeile + " | spalte: " + spalte);
-			System.out.println("#############");
 			// NICHT NACH OBEN
 			if (zeile == 5) {
 
 				// NICHT NACH OBEN UND NACH LINKS
 				if (spalte == 0) {
-					System.out.println("IF zeile == 5 & spalte == 0");
-					System.out.println("#############");
-					System.out.println("zeile: " + zeile + " | spalte: " + spalte);
-					System.out.println("#############");
 					// RECHTS SPERRE
 					nordsee[zeile][spalte + 1] = 'W';
 					// UNTEN SPERRE
@@ -90,10 +83,6 @@ public class Main {
 
 				// NICHT NACH OBEN UND NACH RECHTS
 				else if (spalte == 5) {
-					System.out.println("IF zeile == 5 & spalte == 5");
-					System.out.println("#############");
-					System.out.println("zeile: " + zeile + " | spalte: " + spalte);
-					System.out.println("#############");
 					// LINKS SPERRE
 					nordsee[zeile][spalte - 1] = 'W';
 					// UNTEN SPERRE
@@ -104,10 +93,6 @@ public class Main {
 
 				// NICHT NACH OBEN
 				else {
-					System.out.println("IF zeile == 5 & spalte != 0 oder 5");
-					System.out.println("#############");
-					System.out.println("zeile: " + zeile + " | spalte: " + spalte);
-					System.out.println("#############");
 					// RECHTS SPERRE
 					nordsee[zeile][spalte + 1] = 'W';
 					// LINKS SPERRE
@@ -126,10 +111,6 @@ public class Main {
 
 				// NICHT NACH UNTEN UND NACH LINKS
 				if (spalte == 0) {
-					System.out.println("IF zeile == 0 & spalte == 0");
-					System.out.println("#############");
-					System.out.println("zeile: " + zeile + " | spalte: " + spalte);
-					System.out.println("#############");
 					// RECHTS SPERRE
 					nordsee[zeile][spalte + 1] = 'W';
 					// OBEN SPERRE
@@ -140,10 +121,6 @@ public class Main {
 
 				// NICHT NACH UNTEN UND NACH RECHTS
 				if (spalte == 5) {
-					System.out.println("IF zeile == 0 & spalte == 5");
-					System.out.println("#############");
-					System.out.println("zeile: " + zeile + " | spalte: " + spalte);
-					System.out.println("#############");
 					// LINKS SPERRE
 					nordsee[zeile][spalte - 1] = 'W';
 					// OBEN SPERRE
@@ -159,10 +136,6 @@ public class Main {
 
 				// NICHT NACH LINKS
 				if (spalte == 0) {
-					System.out.println("IF spalte == 0");
-					System.out.println("#############");
-					System.out.println("zeile: " + zeile + " | spalte: " + spalte);
-					System.out.println("#############");
 					// RECHTS SPERRE
 					nordsee[zeile][spalte + 1] = 'W';
 					// OBEN SPERRE
@@ -176,10 +149,6 @@ public class Main {
 				}
 				// NICHT NACH RECHTS
 				else if (spalte == 5) {
-					System.out.println("IF spalte == 5");
-					System.out.println("#############");
-					System.out.println("zeile: " + zeile + " | spalte: " + spalte);
-					System.out.println("#############");
 					// LINKS SPERRE
 					nordsee[zeile][spalte - 1] = 'W';
 					// OBEN SPERRE
@@ -252,8 +221,10 @@ public class Main {
 			if (nordsee[zeile][spalte] == 'S') {
 				treffer++;
 				System.out.println("Guter Schuss Soldat! Das war Schiff " + treffer + "/6");
+				System.out.println("#######################################");
 			} else {
 				System.out.println("Was tun Sie Soldat?! Das war kein Treffer! [" + treffer + "/6]");
+				System.out.println("################################################");
 			}
 		}
 
