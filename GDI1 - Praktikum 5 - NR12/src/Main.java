@@ -66,9 +66,7 @@ public class Main {
 			// Antwort einlesen
 			System.out.print("Bitte a,b,c oder d eingeben: ");
 			antwort_spieler = io.read_char_abcd();
-			// Antwort auswerten
-			richtig = (antwort_spieler == richtige_antwort) ? true : false;
-			// Ergebnis ausgeben
+			// Ergebnis auswerten und ausgeben
 			richtig = auswertung(antwort_spieler, richtige_antwort);
 			ausgeben(richtig, anzahl_richtige_antworten, richtige_antwort);
 
@@ -86,9 +84,7 @@ public class Main {
 			// Antwort einlesen
 			System.out.print("Bitte a,b,c oder eingeben: ");
 			antwort_spieler = io.read_char_abcd();
-			// Antwort auswerten
-			richtig = (antwort_spieler == richtige_antwort) ? true : false;
-			// Ergebnis ausgeben
+			// Ergebnis auswerten und ausgeben
 			richtig = auswertung(antwort_spieler, richtige_antwort);
 			ausgeben(richtig, anzahl_richtige_antworten, richtige_antwort);
 
@@ -105,9 +101,7 @@ public class Main {
 			// Antwort einlesen
 			System.out.print("Bitte a,b,c oder d eingeben: ");
 			antwort_spieler = io.read_char_abcd();
-			// Antwort auswerten
-			richtig = (antwort_spieler == richtige_antwort) ? true : false;
-			// Ergebnis ausgeben
+			// Ergebnis auswerten und ausgeben
 			richtig = auswertung(antwort_spieler, richtige_antwort);
 			ausgeben(richtig, anzahl_richtige_antworten, richtige_antwort);
 
@@ -124,9 +118,7 @@ public class Main {
 			// Antwort einlesen
 			System.out.print("Bitte a,b oder c eingeben: ");
 			antwort_spieler = io.read_char_abcd();
-			// Antwort auswerten
-			richtig = (antwort_spieler == richtige_antwort) ? true : false;
-			// Ergebnis ausgeben
+			// Ergebnis auswerten und ausgeben
 			richtig = auswertung(antwort_spieler, richtige_antwort);
 			ausgeben(richtig, anzahl_richtige_antworten, richtige_antwort);
 
