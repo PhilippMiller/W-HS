@@ -4,10 +4,11 @@ public class Main {
 		return antwort_spieler == richtige_antwort ? true : false;
 	}
 	
-	public static void ausgeben(boolean richtig, int anzahl_richtige_antworten, char richtige_antwort){
+	public static void ausgeben(boolean richtig, int anzahl_richtige_antworten, char richtige_antwort, int[] anzahl_im_durchgang, int durchgang){
 		if (richtig) {
 			System.out.println("Glückwunsch, die Antwort ist richtig!");
 			anzahl_richtige_antworten++;
+			anzahl_im_durchgang[durchgang] = anzahl_im_durchgang[durchgang] + 1;
 			System.out.println(
 					"Sie haben bis jetzt " + anzahl_richtige_antworten + " richtige Antwort(en) gegeben!\n");
 		} else {
@@ -68,7 +69,7 @@ public class Main {
 			antwort_spieler = io.read_char_abcd();
 			// Ergebnis auswerten und ausgeben
 			richtig = auswertung(antwort_spieler, richtige_antwort);
-			ausgeben(richtig, anzahl_richtige_antworten, richtige_antwort);
+			ausgeben(richtig, anzahl_richtige_antworten, richtige_antwort, anzahl_im_durchgang, durchgang);
 
 			/*
 			 * ########### # Frage 2 # ###########
@@ -86,7 +87,7 @@ public class Main {
 			antwort_spieler = io.read_char_abcd();
 			// Ergebnis auswerten und ausgeben
 			richtig = auswertung(antwort_spieler, richtige_antwort);
-			ausgeben(richtig, anzahl_richtige_antworten, richtige_antwort);
+			ausgeben(richtig, anzahl_richtige_antworten, richtige_antwort, anzahl_im_durchgang, durchgang);
 
 			/*
 			 * ########### # Frage 3 # ###########
@@ -103,7 +104,7 @@ public class Main {
 			antwort_spieler = io.read_char_abcd();
 			// Ergebnis auswerten und ausgeben
 			richtig = auswertung(antwort_spieler, richtige_antwort);
-			ausgeben(richtig, anzahl_richtige_antworten, richtige_antwort);
+			ausgeben(richtig, anzahl_richtige_antworten, richtige_antwort, anzahl_im_durchgang, durchgang);
 
 			/*
 			 * ########### # Frage 4 # ###########
@@ -120,9 +121,8 @@ public class Main {
 			antwort_spieler = io.read_char_abcd();
 			// Ergebnis auswerten und ausgeben
 			richtig = auswertung(antwort_spieler, richtige_antwort);
-			ausgeben(richtig, anzahl_richtige_antworten, richtige_antwort);
-
-			anzahl_im_durchgang[durchgang] = anzahl_richtige_antworten;
+			ausgeben(richtig, anzahl_richtige_antworten, richtige_antwort, anzahl_im_durchgang, durchgang);
+			
 			anzahl_richtige_antworten = 0;
 			System.out.println("Dies war Durchgang " + counter + "/3\n\n");
 			System.out.println("-----------------------------------------------");
@@ -133,7 +133,7 @@ public class Main {
 			gesamtpunktzahl = gesamtpunktzahl + anzahl_im_durchgang[i];
 		}
 
-		System.out.println("Sie haben insgesamt " + gesamtpunktzahl + "mal richtig geantwortet!");
+		System.out.println("Sie haben insgesamt " + gesamtpunktzahl + " mal richtig geantwortet!");
 
 	}
 
