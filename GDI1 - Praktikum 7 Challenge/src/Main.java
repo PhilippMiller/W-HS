@@ -15,6 +15,8 @@ public class Main {
 		mitarbeiter[4] = new Aushilfe("Fritz", "Schmidt", 9.5f, 10);
 		mitarbeiter[5] = new Aushilfe("Engel", "Meike", 11f, 10);
 		
+		System.out.println();
+		
 		// gehaltErhöhen Methode für den Mitarbeiter "chef" aufrufen
 		mitarbeiter[2].gehaltErhoehen(1000);
 
