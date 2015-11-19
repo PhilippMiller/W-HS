@@ -14,7 +14,7 @@ public class Main {
 		Angestellter azubi1 = new Angestellter("Vogel", "Sven", 450);
 		System.out.println();
 		Aushilfe aushilfe1 = new Aushilfe("Fritz", "Schmidt", 9.5f, 10);
-		Aushilfe aushilfe2 = new Aushilfe("Name", "Vorname", 11f, 10);
+		Aushilfe aushilfe2 = new Aushilfe("Engel", "Meike", 11f, 10);
 
 		// Leere Zeile ausgeben
 		System.out.println();
