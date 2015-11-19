@@ -1,5 +1,7 @@
 
 public class Mitarbeiter {
+	
+	// variablen erzeugen
 	private String name;
 	private String vorname;
 	private String stelle;
@@ -7,21 +9,25 @@ public class Mitarbeiter {
 	private int gehalt;
 
 	public Mitarbeiter(String name, String vorname, String stelle, int gehalt) {
-		this.name = name;
-		this.vorname = vorname;
-		this.stelle = stelle;
+		// variablen füllen
+		this.setName(name);
+		this.setVorname(vorname);
+		this.setStelle(stelle);
 
-		this.gehalt = gehalt;
+		this.setGehalt(gehalt);
 		
+		// instanztierten Mitarbeiter Ausgeben
 		System.out.print(this.stelle + "\t" + this.vorname + " " + this.name + "\t" + this.gehalt + "\n");
 	}
 	
+	// methode gehaltErhöhen
 	public void gehaltErhoehen(int betrag) {
 		this.gehalt = this.gehalt + betrag;
 		
 		System.out.println("Neues Gehalt von " + this.vorname + " " + this.name + ": " + this.gehalt);
 	 }
 
+	// GETTER und SETTER
 	public String getName() {
 		return name;
 	}
