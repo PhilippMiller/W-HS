@@ -4,31 +4,35 @@
 
 public class Kontakt {
 	
-	private DatumUhrzeit datum;
-	private DatumUhrzeit uhrzeit;
+	private String datum;
+	private String uhrzeit;
 	private String kontaktart;
 	private String mitarbeiter;
 	private String inhalt;
 	
-	public Kontakt() {
-		
+	public Kontakt(String kontaktart, String mitarbeiter, String inhalt) {
+		this.setDatum(DatumUhrzeit.aktuellesDatum());
+		this.setUhrzeit(DatumUhrzeit.aktuelleUhrzeit());
+		this.setKontaktart(kontaktart);
+		this.setMitarbeiter(mitarbeiter);
+		this.setInhalt(inhalt);
 	}
 	
 	
 	// GETTER und SETTER
-	public DatumUhrzeit getDatum() {
+	public String getDatum() {
 		return datum;
 	}
 
-	public void setDatum(DatumUhrzeit datum) {
+	public void setDatum(String datum) {
 		this.datum = datum;
 	}
 
-	public DatumUhrzeit getUhrzeit() {
+	public String getUhrzeit() {
 		return uhrzeit;
 	}
 
-	public void setUhrzeit(DatumUhrzeit uhrzeit) {
+	public void setUhrzeit(String uhrzeit) {
 		this.uhrzeit = uhrzeit;
 	}
 

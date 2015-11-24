@@ -1,52 +1,92 @@
+import java.lang.reflect.Array;
 
 public class Kunde {
-	
-	private int Kundennummmer;
-	private String Name;
-	private String Vorname;
-	private String Ort;
+
+	private int kundennummmer;
+	private String name;
+	private String vorname;
+	private String ort;
 	private String e_mail;
-	private int telefon;
-	private short rabatt;
-	private String Kundenbetreuer;
-	private Kontakt [] Feld;
-	
-	public Kunde() {
-		
+	private String telefon;
+	private float rabatt;
+	private String kundenbetreuer;
+	private Kontakt[] historie = new Kontakt[5];
+
+	public Kunde(int kundennummer, String name, String vorname, String ort, String e_mail, String telefon, float rabatt,
+			String kundenbetreuer) {
+		this.setKundennummmer(kundennummer);
+		this.setName(name);
+		this.setVorname(vorname);
+		this.setOrt(ort);
+		this.setE_mail(e_mail);
+		this.setTelefon(telefon);
+		this.setRabatt(rabatt);
+		this.setKundenbetreuer(kundenbetreuer);
 	}
-	
-	
+
+	public void historieDrucken() {
+		
+		System.out.println("\nKontakthistorie von Kunde " + this.getVorname() + " " + this.getName());
+		System.out.println("Datum\t\tUhrzeit\t\tKontaktform\tMitarbeiter\tInhalt");
+		System.out.println("---------------------------------------------------------------------------------------");
+		
+		for (int i = 0; i < historie.length; i++) {
+			
+			String datum;
+			String uhrzeit;
+			String kontaktart;
+			String mitarbeiter;
+			String inhalt;
+			
+			if (historie[i] != null) {
+				datum = historie[i].getDatum();
+				uhrzeit = historie[i].getUhrzeit();
+				kontaktart = historie[i].getKontaktart();
+				mitarbeiter = historie[i].getMitarbeiter();
+				inhalt = historie[i].getInhalt();
+				
+				System.out.println(datum + "\t" + uhrzeit + "\t\t" + kontaktart + "\t\t" + mitarbeiter + "\t\t" + inhalt); 
+			} else
+				break;
+		}
+		System.out.println();
+	}
+
+	public void historieSpeichern(String kontaktart, String mitarbeiter, String inhalt, int index) {
+		this.setHistorie(new Kontakt(kontaktart, mitarbeiter, inhalt), index);
+	}
+
 	// GETTER und SETTER
 	public int getKundennummmer() {
-		return Kundennummmer;
+		return kundennummmer;
 	}
 
 	public void setKundennummmer(int kundennummmer) {
-		Kundennummmer = kundennummmer;
+		this.kundennummmer = kundennummmer;
 	}
 
 	public String getName() {
-		return Name;
+		return name;
 	}
 
 	public void setName(String name) {
-		Name = name;
+		this.name = name;
 	}
 
 	public String getVorname() {
-		return Vorname;
+		return vorname;
 	}
 
 	public void setVorname(String vorname) {
-		Vorname = vorname;
+		this.vorname = vorname;
 	}
 
 	public String getOrt() {
-		return Ort;
+		return ort;
 	}
 
 	public void setOrt(String ort) {
-		Ort = ort;
+		this.ort = ort;
 	}
 
 	public String getE_mail() {
@@ -57,37 +97,36 @@ public class Kunde {
 		this.e_mail = e_mail;
 	}
 
-	public int getTelefon() {
+	public String getTelefon() {
 		return telefon;
 	}
 
-	public void setTelefon(int telefon) {
+	public void setTelefon(String telefon) {
 		this.telefon = telefon;
 	}
 
-	public short getRabatt() {
+	public float getRabatt() {
 		return rabatt;
 	}
 
-	public void setRabatt(short rabatt) {
+	public void setRabatt(float rabatt) {
 		this.rabatt = rabatt;
 	}
 
 	public String getKundenbetreuer() {
-		return Kundenbetreuer;
+		return kundenbetreuer;
 	}
 
 	public void setKundenbetreuer(String kundenbetreuer) {
-		Kundenbetreuer = kundenbetreuer;
+		this.kundenbetreuer = kundenbetreuer;
 	}
 
-	public Kontakt[] getFeld() {
-		return Feld;
+	public Kontakt[] getHistorie() {
+		return historie;
 	}
 
-	public void setFeld(Kontakt[] feld) {
-		Feld = feld;
+	public void setHistorie(Kontakt kontakt, int index) {
+		this.historie[index] = kontakt;
 	}
-	
 
 }
