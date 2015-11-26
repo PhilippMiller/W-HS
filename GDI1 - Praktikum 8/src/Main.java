@@ -21,7 +21,7 @@ public class Main {
 		
 		System.out.println("Der Preis für eine große " + speisekarte.getGerichte()[0].getName() 
 				+ " ist: " + speisekarte.getGerichte()[0].getPreis() + " Euro");	
-		System.out.println(speisekarte.getGerichte()[1].getName() + " in klein kostet " 
+		System.out.println(speisekarte.getGerichte()[1].getName() + " " + speisekarte.getGerichte()[1].getNudelsorte() + " in klein kostet " 
 				+ speisekarte.getGerichte()[1].getPreis() + " Euro");
 		
 	}

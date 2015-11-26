@@ -1,5 +1,5 @@
 
-public class Gericht {
+public abstract class Gericht {
 	
 	private String typ;
 	private String name;
@@ -23,6 +23,8 @@ public class Gericht {
 		
 		return this.getPreis();
 	}
+	
+	abstract String getNudelsorte();
 	
 	
 	// GETTER und SETTER

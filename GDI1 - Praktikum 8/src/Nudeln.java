@@ -13,7 +13,7 @@ public class Nudeln extends Gericht{
 		this.setUeberbacken(ueberbacken);
 		this.setSoﬂe(soﬂe);
 		if (this.isUeberbacken()) {
-			this.setName(name + " " + nudelsorte + " " + this.ueberbackenText);
+			this.setName(name + " " + this.ueberbackenText);
 		}
 	}
 	

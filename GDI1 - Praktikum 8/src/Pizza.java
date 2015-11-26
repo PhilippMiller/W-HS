@@ -9,6 +9,11 @@ public class Pizza extends Gericht{
 		this.setBelag(belag);
 		this.setBackzeit(backzeit);
 	}
+	
+	@Override
+	String getNudelsorte() {
+		return null;
+	}
 
 	
 	// GETTERS und SETTERS
