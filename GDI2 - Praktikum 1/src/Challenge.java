@@ -14,7 +14,7 @@ public class Challenge {
 		 	int da = (int)foo;
 		 */
 		
-		/* OutOfMemoryException */
+		/* OutOfMemoryError */
 		/*
 		 	String[] array = new String[Integer.MIN_VALUE-1];
 		 */
