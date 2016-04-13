@@ -13,7 +13,12 @@ public class Aufgabe2 {
 				System.out.println(i);
 		}
 		zeit = ((zeit - System.currentTimeMillis())*-1)/1000;
-		System.out.println("Es wurden " + zeit + " Sekunden benötigt!");
+		String sek_min = "Sekunden";
+		if (zeit >= 60) {
+			zeit /= 60;
+			sek_min = "Minuten";
+		}
+		System.out.println("Es wurden " + zeit + sek_min + " benötigt!");
 	}
 	
 	private static boolean isPrimzahl(int zahl) {
