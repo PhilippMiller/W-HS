@@ -7,10 +7,13 @@ public class Aufgabe2 {
 		
 		System.out.println("Es wurden folgende Primzahlen gefunden:");
 		
+		double zeit = System.currentTimeMillis();
 		for (int i = 1; i <= zahl; i++) {
 			if (isPrimzahl(i))
 				System.out.println(i);
 		}
+		zeit = ((zeit - System.currentTimeMillis())*-1)/1000;
+		System.out.println("Es wurden " + zeit + " Sekunden benötigt!");
 	}
 	
 	private static boolean isPrimzahl(int zahl) {
