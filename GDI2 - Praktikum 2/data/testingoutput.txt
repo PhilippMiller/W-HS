@@ -1,0 +1,3987 @@
+1 | /********* Source File: extra-resources/header.js*********/
+2 | /*!*********************************************************************
+3 |  * ELYCHARTS v2.1.6-SNAPSHOT $Id: elycharts.js 101 2014-02-19 10:52:26Z stefano.bagnara@gmail.com $ 
+4 |  * A Javascript library to generate interactive charts with vectorial graphics.
+5 |  *
+6 |  * Copyright (c) 2010-2014 Void Labs s.n.c. (http://void.it)
+7 |  * Licensed under the MIT (http://creativecommons.org/licenses/MIT/) license.
+8 |  **********************************************************************/
+9 | /********* Source File: src/elycharts_defaults.js*********/
+10 | /**********************************************************************
+11 |  * ELYCHARTS
+12 |  * A Javascript library to generate interactive charts with vectorial graphics.
+13 |  *
+14 |  * Copyright (c) 2010-2014 Void Labs s.n.c. (http://void.it)
+15 |  * Licensed under the MIT (http://creativecommons.org/licenses/MIT/) license.
+16 |  **********************************************************************/
+17 | 
+18 | (function($) {
+19 | if (!$.elycharts)
+20 |   $.elycharts = {};
+21 | 
+22 | /***********************************************************************
+23 |  * DEFAULT OPTIONS
+24 |  **********************************************************************/
+25 | 
+26 | $.elycharts.templates = {
+27 | 
+28 |   common : {
+29 |     // Tipo di grafico
+30 |     // type : 'line|pie|funnel|barline'
+31 |     
+32 |     // Permette di specificare una configurazione di default da utilizzare (definita in $.elycharts.templates.NOME)
+33 |     // La configurazione completa ? quindi data da tutti i valori della conf di default alla quale viene unita (con sovrascrittura) la conf corrente
+34 |     // Il parametro ? ricorsivo (la configurazione di default puo' a sua volta avere una configurazione di default)
+35 |     // Se non specificato, la configurazione di default ? quella con lo stesso nome del tipo di grafico
+36 |     // template : 'NOME',
+37 |     
+38 |     /* DATI:
+39 |     // I valori associati a ogni serie del grafico. Ogni serie ? associata a una chiave dell'oggetto value, il cui 
+40 |     // valore ? l'array di dati relativi
+41 |     values : {},
+42 |     
+43 |     // Label associate ai valori del grafico
+44 |     // Solo in caso di label gestite da labelmanager (quindi per pie e funnel) e per label.html = true e' possibile inserire 
+45 |     // degli elementi DOM/JQUERY che verranno presi e posizionati correttament.
+46 |     labels : [],
+47 |     
+48 |     // Anchor per la gestione mediante anchormanager. Possono essere stringhe e oggetti DOM/JQUERY che verranno riposizionati
+49 |     anchors : {},
+50 |     
+51 |     tooltips : {},
+52 |     
+53 |     legend : [],
+54 |     */
+55 |     
+56 |     // Autoresize uses jQuery resize event to automatically resize the chart to the container
+57 |     // autoresize makes sense only when width or height is not defined.
+58 | 	// autoresize: false,
+59 | 	  
+60 |     // Per impostare una dimensione diversa da quella del container settare width e height
+61 |     //width : x,
+62 |     //height : y
+63 |     
+64 |     // I margini del grafico rispetto al frame complessivo. Da notare che riguardano la posizione del grafico
+65 |     // principale, e NON degli elementi aggiuntivi (legenda, label e titoli degli assi...). Quindi i margini devono
+66 |     // essere impostati in genere proprio per lasciare lo spazio per questi elementi
+67 |     // Sintassi: [top, right, bottom, left]
+68 |     margins: [10, 10, 10, 10],
+69 | 
+70 |     // style : {},
+71 |     
+72 |     // Per gestire al meglio l'interattivita' del grafico (tooltip, highlight, anchor...) viene inserito un secondo
+73 |     // layer per le parti sensibili al mouse. Se si sa che il grafico non avra' alcuna interattivita' si puo' impostare 
+74 |     // questo valore a false per evitare di creare il layer (ottimizzando leggermente la pagina)
+75 |     interactive : true,
+76 | 
+77 |     // Dati da applicare a tutte le serie del grafico
+78 |     defaultSeries : {
+79 |       // Impostare a false per disabilitare la visualizzazione della serie
+80 |       visible : true,
+81 |       
+82 |       // Impostare color qui permette di impostare velocemente plotProps.stroke+fill, tooltip.frameProps.stroke, dotProps.stroke e fillProps.fill (se non specificati)
+83 |       //color: 'blue',
+84 |       
+85 |       //plotProps : { },
+86 |       
+87 |       // Impostazioni dei tooltip
+88 |       tooltip : {
+89 |         active : true,
+90 |         // Se width ed height vengono impostati a 0 o ad "auto" (equivalenti) non vengono fissate dimensioni, quindi il contenuto si autodimensiona in funzione del tooltip
+91 |         // Impostare a 0|auto ? incompatibile con il frame SVG, quindi viene automaticamente disabilitato (come se frameProps = false)
+92 |         width: 100, height: 50, 
+93 |         roundedCorners: 5, 
+94 |         padding: [6, 6] /* y, x */,
+95 |         offset: [20, 0] /* y, x */,
+96 |         // Se frameProps = false non disegna la cornice del tooltip (ad es. per permettere di definire la propria cornice HTML)
+97 |         frameProps : { fill: "white", "stroke-width": 2 },
+98 |         contentStyle : { "font-family": "Arial", "font-size": "12px", "line-height": "16px", color: "black" }
+99 |       },
+100 |       
+101 |       // Highlight feature
+102 |       highlight : {
+103 |         // Cambia le dimensioni dell'elemento quando deve essere evidenziato
+104 |         //scale : [x, y],
+105 |         // Opzioni di animazione effetto "scale"
+106 |         scaleSpeed : 100, scaleEasing : '',
+107 |         // Cambia gli attributi dell'elemento quando evidenziato
+108 |         //newProps : { opacity : 1 },
+109 |         // Inserisce un layer con gli attributi specificati sopra quello da evidenziare
+110 |         //overlayProps : {"fill" : "white", "fill-opacity" : .3, "stroke-width" : 0}
+111 |         // Muove l'area evidenziata. E' possibile specificare un valore X o un array [X, Y]
+112 |         //move : 10,
+113 |         // Opzioni di animazione effetto "move"
+114 |         moveSpeed : 100, moveEasing : '',
+115 |         // Opzioni di animazione da usare per riportare l'oggetto alle situazione iniziale
+116 |         restoreSpeed : 0, restoreEasing : ''
+117 |       },
+118 |       
+119 |       anchor : {
+120 |         // Aggiunge alle anchor esterne la classe selezionata quando il mouse passa sull'area
+121 |         //addClass : "",
+122 |         // Evidenzia la serie al passaggio del mouse
+123 |         //highlight : "",
+124 |         // Se impostato a true usa gli eventi mouseenter/mouseleave invece di mouseover/mouseout per l'highlight
+125 |         //useMouseEnter : false,
+126 |       },
+127 |       
+128 |       // Opzioni per la generazione animata dei grafici
+129 |       startAnimation : {
+130 |         //active : true,
+131 |         type : 'simple',
+132 |         speed : 600,
+133 |         delay : 0,
+134 |         propsFrom : {}, // applicate a tutte le props di plot
+135 |         propsTo : {}, // applicate a tutte le props di plot
+136 |         easing : '' // easing raphael: >, <, <>, backIn, backOut, bounce, elastic
+137 |         
+138 |         // Opzionale per alcune animazioni, permette di specificare un sotto-tipo
+139 |         // subType : 0|1|2
+140 |       },
+141 |       
+142 |       // Opzioni per le transizioni dei grafici durante un cambiamento di configurazione
+143 |       /* stepAnimation : {
+144 |         speed : 600,
+145 |         delay : 0,
+146 |         easing : '' // easing raphael: >, <, <>, backIn, backOut, bounce, elastic
+147 |       },*/
+148 |       
+149 |       label : {
+150 |         // Disegna o meno la label interna al grafico
+151 |         active : false,
+152 |         // Imposta un offset [X,Y] per la label (le coordinate sono relative al sistema di assi dello specifico settore disegnato. 
+153 |         // Ad es. per il piechart la X ? la distanza dal centro, la Y lo spostamento ortogonale
+154 |         //offset : [x, y],
+155 |         html : false,
+156 |         // Proprieta' della label (per HTML = false)
+157 |         props : { fill: 'black', stroke: "none", "font-family": 'Arial', "font-size": "16px" },
+158 |         // Stile CSS della label (per HTML = true)
+159 |         style : { cursor : 'default' }
+160 |         // Posizionamento della label rispetto al punto centrale (+offset) identificato
+161 |         //frameAnchor : ['start|middle|end', 'top|middle|bottom']
+162 |       }
+163 |       
+164 |       /*legend : {
+165 |         dotType : 'rect',
+166 |         dotWidth : 10, dotHeight : 10, dotR : 4,
+167 |         dotProps : { },
+168 |         textProps : { font: '12px Arial', fill: "#000" }
+169 |       }*/
+170 |     },
+171 |     
+172 |     series : {
+173 |       // Serie specifica usata quando ci sono "dati vuoti" (ad esempio quando un piechart e' a 0)
+174 |       empty : {
+175 |         //plotProps : { fill : "#D0D0D0" },
+176 |         label : { active : false },
+177 |         tooltip : { active : false }
+178 |       }
+179 |       /*root : {
+180 |         values : []
+181 |       }*/
+182 |     },
+183 |     
+184 |     features : {
+185 |       tooltip : {
+186 |         // Imposta una posizione fissa per tutti i tooltip
+187 |         //fixedPos : [ x,  y]
+188 |         // Velocita' del fade
+189 |         fadeDelay : 100, 
+190 |         // Velocita' dello spostamento del tip da un'area all'altra
+191 |         moveDelay : 300
+192 |         // E' possibile specificare una funzione che filtra le coordinate del tooltip prima di mostrarlo, permettendo di modificarle
+193 |         // Nota: le coordinate del mouse sono in mouseAreaData.event.pageX/pageY, e nel caso va ritornato [mouseAreaData.event.pageX, mouseAreaData.event.pageY, true] per indicare che il sistema e' relativo alla pagina)
+194 |         //positionHandler : function(env, tooltipConf, mouseAreaData, suggestedX, suggestedY) { return [suggestedX, suggestedY] }
+195 |       },
+196 |       mousearea : {
+197 |         // 'single' le aree sensibili sono relative a ogni valore di ogni serie, se 'index' il mouse attiva tutte le serie per un indice
+198 |         type : 'single',
+199 |         // In caso di type = 'index', indica se le aree si basano sulle barre ('bar') o sui punti di una linea ('line'). Specificare 'auto' per scegliere automaticamente
+200 |         indexCenter : 'auto',
+201 |         // Quanto tempo puo' passare nel passaggio da un'area all'altra per considerarlo uno spostamento di puntatore
+202 |         areaMoveDelay : 500,
+203 |         // Se diversi chart specificano lo stesso syncTag quando si attiva l'area di uno si disattivano quelle degli altri
+204 |         syncTag: false,
+205 |         // Callback for mouse actions. Parameters passed: (env, serie, index, mouseAreaData)
+206 |         onMouseEnter : false,
+207 |         onMouseExit : false,
+208 |         onMouseChanged : false,
+209 |         onMouseOver : false,
+210 |         onMouseOut : false
+211 |       },
+212 |       highlight : {
+213 |         // Evidenzia tutto l'indice con una barra ("bar"), una linea ("line") o una linea centrata sulle barre ("barline"). Se "auto" decide in autonomia tra bar e line
+214 |         //indexHighlight : 'barline',
+215 |         indexHighlightProps : { opacity : 1 /*fill : 'yellow', opacity : .3, scale : ".5 1"*/ }
+216 |       },
+217 |       animation : {
+218 |         // Valore di default per la generazione animata degli elementi del grafico (anche per le non-serie: label, grid...)
+219 |         startAnimation : {
+220 |           //active : true,
+221 |           //propsFrom : {}, // applicate a tutte le props di plot
+222 |           //propsTo : {}, // applicate a tutte le props di plot
+223 |           speed : 600,
+224 |           delay : 0,
+225 |           easing : '' // easing raphael: >, <, <>, backIn, backOut, bounce, elastic
+226 |         },
+227 |         // Valore di default per la transizione animata degli elementi del grafico (anche per le non-serie: label, grid...)
+228 |         stepAnimation : {
+229 |           speed : 600,
+230 |           delay : 0,
+231 |           easing : '' // easing raphael: >, <, <>, backIn, backOut, bounce, elastic
+232 |         }
+233 |       },
+234 |       frameAnimation : {
+235 |         active : false,
+236 |         cssFrom : { opacity : 0},
+237 |         cssTo : { opacity: 1 },
+238 |         speed : 'slow',
+239 |         easing : 'linear' // easing jQuery: 'linear' o 'swing'
+240 |       },
+241 |       // used to be true
+242 |       pixelWorkAround : {
+243 |         active : Raphael.svg
+244 |       },
+245 |       label : {},
+246 |       shadows : {
+247 |         active : false,
+248 |         offset : [2, 2], // Per attivare l'ombra, [y, x]
+249 |         props : {"stroke-width": 0, "stroke-opacity": 0, "fill": "black", "fill-opacity": .3}
+250 |       },
+251 |       // BALLOONS: Applicabile solo al funnel (per ora)
+252 |       balloons : {
+253 |         active : false,
+254 |         // Width: se non specificato e' automatico
+255 |         //width : 200,
+256 |         // Height: se non specificato e' automatico
+257 |         //height : 50,
+258 |         // Lo stile CSS da applicare a ogni balloon
+259 |         style : {  },
+260 |         // Padding 
+261 |         padding : [ 5, 5 ],
+262 |         // La distanza dal bordo sinistro
+263 |         left : 10,
+264 |         // Percorso della linea: [ [ x, y iniziali (rispetto al punto di inizio standard)], ... [x, y intermedi (rispetto al punto di inizio standard)] ..., [x, y finale (rispetto all'angolo del balloon pi? vicino al punto di inizio)] ]
+265 |         line : [ [ 0, 0 ], [0, 0] ],
+266 |         // Propriet? della linea
+267 |         lineProps : { }
+268 |       },
+269 |       legend : {
+270 |         horizontal : false,
+271 |         x : 'auto', // X | auto, (auto solo per horizontal = true)
+272 |         y : 10, 
+273 |         width : 'auto', // X | auto, (auto solo per horizontal = true)
+274 |         height : 20,
+275 |         itemWidth : "fixed", // fixed | auto, solo per horizontal = true
+276 |         margins : [0, 0, 0, 0],
+277 |         dotMargins : [10, 5], // sx, dx
+278 |         borderProps : { fill : "white", stroke : "black", "stroke-width" : 1 },
+279 |         dotType : 'rect',
+280 |         dotWidth : 10, dotHeight : 10,
+281 |         // radius for the dots (used to be 4 but there also was a bug preventing radius support, so moved to 0) 
+282 |         dotR : 0,
+283 |         dotProps : { type : "rect", width : 10, height : 10 },
+284 |         textProps : { font: '12px Arial', fill: "#000" }
+285 |       },
+286 |       debug : {
+287 |         active : false
+288 |       }
+289 |     },
+290 |     
+291 |     enableInternalCaching : true,
+292 |     
+293 |     nop : 0
+294 |   },
+295 | 
+296 |   line : {
+297 |     template : 'common',
+298 |     
+299 |     // absolute margin left to both sides of each column / column group.
+300 |     barMargins : 0,
+301 |     // overlap between additional columns over the previous one (ignored for the first serie)
+302 |     barOverlapPerc : 0,
+303 |     
+304 |     // disable this if you want to use null values and want the lines/area to be broken over null values 
+305 |     avgOverNulls: true,
+306 | 
+307 |     // Axis
+308 |     defaultAxis : {
+309 |       // [non per asse x] Normalizza il valore massimo dell'asse in modo che tutte le label abbiamo al massimo N cifre significative
+310 |       // (Es: se il max e' 135 e normalize = 2 verra' impostato il max a 140, ma se il numero di label in y e' 3 verr? impostato 150)
+311 |       normalize: 2,
+312 |       // Permette di impostare i valori minimi e massimi di asse (invece di autorilevarli)
+313 |       min: 0, //max: x,
+314 |       // Imposta un testo da usare come prefisso e suffisso delle label
+315 |       //prefix : "", suffix : "",
+316 |       // Visualizza o meno le label dell'asse
+317 |       labels: false,
+318 |       // Distanza tra le label e l'asse relativo
+319 |       labelsDistance: 8, 
+320 |       // [solo asse x] Rotazione (in gradi) delle label. Se specificato ignora i valori di labelsAnchor e labelsProps['text-anchor']
+321 |       labelsRotate: 0, 
+322 |       // Proprieta' grafiche delle label
+323 |       labelsProps : {font: '10px Arial', fill: "#000"},
+324 |       // Compatta il numero mostrato nella label usando i suffissi specificati per migliaia, milioni...
+325 |       //labelsCompactUnits : ['k', 'M'],
+326 |       // Permette di specificare una funzione esterna che si occupa di formattare (o in generale trasformare) la label
+327 |       //labelsFormatHandler : function (label) { return label },
+328 |       // Salta le prime N label
+329 |       //labelsSkip : 0, 
+330 |       // Force alignment for the label. Auto will automatically center it for x axis (also considering labelsRotate), "end" for l axis, "start" for the right axis.
+331 |       //labelsAnchor : "auto"
+332 |       // [solo asse x] Force an alternative position for the X axis labels. Auto will automatically choose the right position depending on "labelsCenter", the type of charts (bars vs lines), and labelsRotate.
+333 |       //labelsPos : "auto",
+334 |       // Automatically hide labels that would overlap previous labels.
+335 |       //labelsHideCovered : true, 
+336 |       // Inserisce un margine alla label (a sinistra se in asse x, in alto se in altri assi)
+337 |       //labelsMargin: 10,  
+338 |       // [solo asse x] If labelsHideCovered = true, make sure each label have at least this space before the next one. 
+339 |       //labelsMarginRight: 0, 
+340 |       // Distanza del titolo dall'asse
+341 |       titleDistance : 25, titleDistanceIE : .75,
+342 |       // Proprieta' grafiche del titolo
+343 |       titleProps : {font: '12px Arial', fill: "#000", "font-weight": "bold"}
+344 |     },
+345 |     axis : {
+346 |       x : { titleDistanceIE : 1.2 }
+347 |     },
+348 |     
+349 |     defaultSeries : {
+350 |       // Tipo di serie, puo' essere 'line' o 'bar'
+351 |       type : 'line', 
+352 |       // L'asse di riferimento della serie. Gli assi "l" ed "r" sono i 2 assi visibili destro e sinistro. 
+353 |       // E' possibile inserire anche un asse arbitrario (che non sar? visibile)
+354 |       axis : 'l',
+355 |       // Specificare cumulative = true se i valori inseriti per la serie sono cumulativi
+356 |       cumulative : false,
+357 |       // In caso di type="line" indica l'arrotondamento della linea
+358 |       rounded : 1,
+359 |       // Mette il punto di intersezione al centro dell'intervallo invece che al limite (per allineamento con bars). Se 'auto' decide autonomamente
+360 |       lineCenter : 'auto',
+361 |       // Permette di impilare le serie (i valori di uno iniziano dove finiscono quelli del precedente) con un altra (purche' dello stesso tipo)
+362 |       // Specificare "true" per impilare con la serie visibile precedente, oppure il nome della serie sulla quale impilare
+363 |       // stacked : false,
+364 | 
+365 |       plotProps : {"stroke-width": 1, "stroke-linejoin": "round"},
+366 |       
+367 |       barWidthPerc: 100,
+368 |       //DELETED: barProps : {"width-perc" : 100, "stroke-width": 1, "fill-opacity" : .3},
+369 |       
+370 |       // Attiva o disattiva il riempimento
+371 |       fill : false, 
+372 |       fillProps : {stroke: "none", "stroke-width" : 0, "stroke-opacity": 0, opacity: .3},
+373 | 
+374 |       dot : false,
+375 |       dotProps : {size: 4, stroke: "#000", zindex: 5},
+376 |       dotShowOnNull : false,
+377 | 
+378 |       mouseareaShowOnNull : false,
+379 |       
+380 |       startAnimation : {
+381 |         plotPropsFrom : false,
+382 |         // DELETED linePropsFrom : false,
+383 |         fillPropsFrom : false, 
+384 |         dotPropsFrom : false,
+385 |         //DELETED barPropsFrom : false,
+386 |         shadowPropsFrom : false
+387 |       }
+388 |       
+389 |     },
+390 |     
+391 |     features : {
+392 |       grid : {
+393 |         // N. di divisioni sull'asse X. Se "auto" si basa sulla label da visualizzare. Se "0" imposta draw[vertical] = false
+394 |         // Da notare che se "auto" allora la prima e l'ultima linea (bordi) le fa vedere sempre (se ci sono le label). Se invece e' un numero si comporta come ny: fa vedere i bordi solo se forzato con forceBorder
+395 |         nx : "auto",
+396 |         // N. di divisione sull'asse Y. Se "0" imposta draw[horizontal] = false
+397 |         ny : 4,
+398 |         // Disegna o meno la griglia. Si puo' specificare un array [horizontal, vertical]
+399 |         draw : false,
+400 |         // Forza la visualizzazione dei bordi/assi. Se true disegna comunque i bordi (anche se draw = false o se non ci sono label), 
+401 |         // altrimenti si basa sulle regole standard di draw e presenza label (per asse x)
+402 |         // Puo' essere un booleano singolo o un array di bordi [up, dx, down, sx]
+403 |         forceBorder : false,
+404 |         // Proprieta' di visualizzazione griglia
+405 |         props : {stroke: '#e0e0e0', "stroke-width": 1},
+406 |         // Dimensioni extra delle rette [up, dx, down, sx]
+407 |         extra : [0, 0, 0, 0],
+408 |         // Indica se le label (e le rispettive linee del grid) vanno centrate sulle barre (true), quindi tra 2 linee, o sui punti della serie (false), quindi su una sola linea
+409 |         // Se specificato "auto" decide in autonomia
+410 |         labelsCenter : "auto",
+411 | 
+412 |         // Display a rectangular region with properties specied for every even/odd vertical/horizontal grid division
+413 |         evenVProps : false,
+414 |         oddVProps : false,
+415 |         evenHProps : false,
+416 |         oddHProps : false,
+417 | 
+418 |         ticks : {
+419 |           // Attiva le barrette sugli assi [x, l, r]
+420 |           active : [false, false, false],
+421 |           // Dimensioni da prima dell'asse a dopo l'asse
+422 |           size : [10, 10],
+423 |           // Proprieta' di visualizzazione griglia
+424 |           props : {stroke: '#e0e0e0', "stroke-width": 1}
+425 |         }
+426 |       }
+427 |     },
+428 | 
+429 |     nop : 0
+430 |   },
+431 | 
+432 |   pie : {
+433 |     template : 'common',
+434 |     
+435 |     // Coordinate del centro, se non specificate vengono autodeterminate
+436 |     //cx : 0, cy : 0,
+437 |     // Raggio della torta, se non specificato viene autodeterminato
+438 |     //r : 0
+439 |     // Radius in percentage of the available space
+440 |     //rPerc : 80
+441 |     // Angolo dal quale iniziare a disegnare le fette, in gradi
+442 |     startAngle : 0,
+443 |     // Disegna la torta con le fette in senso orario (invece dell'orientamento standard per gradi, in senso antiorario)
+444 |     clockwise : false,
+445 |     // Soglia (rapporto sul totale) entro la quale una fetta non viene visualizzata
+446 |     valueThresold : 0.006,
+447 |     
+448 |     // @since elycharts 2.1.5 (previously there was no margins support so when we implemented it we had to add a 0 margin
+449 |     // here to not start adding the common margin to every pie user
+450 |     margins : [0, 0, 0, 0],
+451 |     
+452 |     defaultSeries : {
+453 |       // r: .5, raggio usato solo per questo spicchio, se <=1 e' in rapporto al raggio generale
+454 |       // inside: X, inserisce questo spicchio dentro un altro (funziona solo inside: precedente, e non gestisce + spicchi dentro l'altro)
+455 |     }
+456 |   },
+457 | 
+458 |   funnel : {
+459 |     template : 'common',
+460 |     
+461 |     rh: 0, // height of ellipsis (for top and bottom cuts)
+462 |     method: 'width', // width/cutarea
+463 |     topSector: 0, // height factor of top cylinder
+464 |     topSectorProps : { fill: "#d0d0d0" },
+465 |     bottomSector: .1, // height factor of bottom cylinder
+466 |     bottomSectorProps : { fill: "#d0d0d0" },
+467 |     edgeProps : { fill: "#c0c0c0", "stroke-width": 1, opacity: 1 },
+468 | 
+469 |     nop : 0
+470 |   },
+471 |   
+472 |   barline : {
+473 |     template : 'common',
+474 | 
+475 |     // Imposta il valore massimo per la scala (altrimenti prende il valore + alto)
+476 |     // max : X
+477 |     
+478 |     // Impostare direction = rtl per creare un grafico che va da destra a sinistra
+479 |     direction : 'ltr'
+480 |   }
+481 | }
+482 | 
+483 | })(jQuery);
+484 | /********* Source File: src/elycharts_core.js*********/
+485 | /**********************************************************************
+486 |  * ELYCHARTS
+487 |  * A Javascript library to generate interactive charts with vectorial graphics.
+488 |  *
+489 |  * Copyright (c) 2010-2014 Void Labs s.n.c. (http://void.it)
+490 |  * Licensed under the MIT (http://creativecommons.org/licenses/MIT/) license.
+491 |  **********************************************************************/
+492 | 
+493 | (function($) {
+494 | if (!$.elycharts)
+495 |   $.elycharts = {};
+496 | 
+497 | $.elycharts.lastId = 0;
+498 | 
+499 | /***********************************************************************
+500 |  * INITIALIZATION / MAIN CALL
+501 |  **********************************************************************/
+502 | 
+503 | $.fn.chart = function($options) {
+504 |   if (!this.length)
+505 |     return this;
+506 |   
+507 |   var $env = this.data('elycharts_env');
+508 | 
+509 |   if (typeof $options == "string") {
+510 |     if ($options.toLowerCase() == "config")
+511 |       return $env ? $env.opt : false;
+512 |     if ($options.toLowerCase() == "clear") {
+513 |       if ($env) {
+514 |         if ($.elycharts.featuresmanager) $.elycharts.featuresmanager.clear($env);
+515 |         $env.paper.clear();
+516 |         $env.cache = false;
+517 |         if ($env.autoresize) $(window).unbind('resize', $env.autoresize);
+518 |         this.html("");
+519 |         this.data('elycharts_env', false);
+520 |       }
+521 |     }
+522 |     return this;
+523 |   }
+524 |   
+525 |   if (!$env) {
+526 |     // First call, initialization
+527 | 
+528 |     if ($options)
+529 |       $options = _extendAndNormalizeOptions($options);
+530 |     
+531 |     if (!$options || !$options.type || !$.elycharts.templates[$options.type]) {
+532 |       alert('ElyCharts ERROR: chart type is not specified');
+533 |       return false;
+534 |     }
+535 |     $env = _initEnv(this, $options);
+536 | 
+537 |     this.data('elycharts_env', $env);
+538 |   } else {
+539 |   	if (!$options) $options = {};
+540 |     $options = _normalizeOptions($options, $env.opt);
+541 |     
+542 |     // Already initialized
+543 |     $env.oldopt = common._clone($env.opt);
+544 |     $env.opt = $.extend(true, $env.opt, $options);
+545 |     $env.newopt = $options;
+546 |     $env.oldwidth = $env.width;
+547 |     $env.oldheight = $env.height;
+548 |     
+549 |   }
+550 |   
+551 |   $env.cache = $options['enableInternalCaching'] ? {} : false;
+552 |   
+553 |   _processGenericConfig($env, $options);
+554 | 
+555 |   if ($env.opt.autoresize) {
+556 |   	if (!$env.autoresize) {
+557 |   		var that = this;
+558 |   		$env.autoresize = _debounce(function() {
+559 |   			that.chart();
+560 |   		});
+561 |   		$(window).bind('resize', $env.autoresize);
+562 |   	}
+563 |   } else {
+564 |   	if ($env.autoresize) {
+565 |   		$(window).unbind('resize', $env.autoresize);
+566 |   		$env.autoresize = false;
+567 |   	}
+568 |   }
+569 |   
+570 |   
+571 |   var pieces = $.elycharts[$env.opt.type].draw($env);
+572 |   if ($env.pieces) {
+573 |     pieces = _updatePieces($env, $env.pieces, pieces);
+574 |   }
+575 |   common._show($env, pieces);
+576 |   $env.pieces = pieces;
+577 | 
+578 |   return this;
+579 | }
+580 | 
+581 | function _updatePieces(env, pieces1, pieces2, section, serie, internal) {
+582 |   // Se pieces2 == null deve essere nascosto tutto pieces1
+583 |   var newpieces = [], newpiece;
+584 |   var j = 0;
+585 |   for (var i = 0; i < pieces1.length; i ++) {
+586 | 
+587 |     // Se il piece attuale c'e' solo in pieces2 lo riporto nei nuovi, impostando come gia' mostrato
+588 |     // A meno che internal = true (siamo in un multipath, nel caso se una cosa non c'e' va considerata da togliere)
+589 |     if (pieces2 && (j >= pieces2.length || !common.samePiecePath(pieces1[i], pieces2[j]))) {
+590 |       if (!internal) {
+591 |         pieces1[i].show = false;
+592 |         newpieces.push(pieces1[i]);
+593 |       } else {
+594 |         newpiece = { path : false, attr : false };
+595 |         newpiece.show = true;
+596 |         newpiece.animation = {
+597 |           element : pieces1[i].element ? pieces1[i].element : false,
+598 |           speed : 0,
+599 |           easing : '',
+600 |           delay : 0
+601 |         }
+602 |         newpieces.push(newpiece);
+603 |       }
+604 |     }
+605 |     // Bisogna gestire la transizione dal vecchio piece al nuovo
+606 |     else {
+607 |       newpiece = pieces2 ? pieces2[j] : { path : false, attr : false };
+608 |       newpiece.show = true;
+609 |       if (typeof pieces1[i].paths == 'undefined') {
+610 |         newpiece.animation = {
+611 |           element : pieces1[i].element ? pieces1[i].element : false,
+612 |           speed : 0,
+613 |           easing : '',
+614 |           delay : 0
+615 |         }
+616 |       } else {
+617 |         // Multiple path piece
+618 |         newpiece.paths = _updatePieces(env, pieces1[i].paths, pieces2[j].paths, pieces1[i].section, pieces1[i].serie, true);
+619 |       }
+620 |       newpieces.push(newpiece);
+621 |       j++;
+622 |     }
+623 |   }
+624 |   // If there are pieces left in pieces2 i must add them unchanged
+625 |   if (pieces2)
+626 |     for (; j < pieces2.length; j++)
+627 |       newpieces.push(pieces2[j]);
+628 | 
+629 |   return newpieces;
+630 | };
+631 | 
+632 | 
+633 | // http://unscriptable.com/index.php/2009/03/20/debouncing-javascript-methods/
+634 | function _debounce(func, threshold, execAsap) {
+635 |   var timeout;
+636 |   return function debounced () {
+637 |     var obj = this, args = arguments;
+638 |     function delayed () {
+639 |       if (!execAsap) func.apply(obj, args);
+640 |       timeout = null; 
+641 |     };
+642 | 
+643 |     if (timeout) clearTimeout(timeout);
+644 |     else if (execAsap) func.apply(obj, args);
+645 | 
+646 |     timeout = setTimeout(delayed, threshold || 100); 
+647 |   };
+648 | }
+649 | 
+650 | /**
+651 |  * Must be called only in first call to .chart, to initialize elycharts environment.
+652 |  */
+653 | function _initEnv($container, $options) {
+654 |   var $env = {
+655 |     id : $.elycharts.lastId ++,
+656 |     paper : common._RaphaelInstance($container.get()[0], 0, 0),
+657 |     container : $container,
+658 |     plots : [],
+659 |     opt : $options
+660 |   };
+661 | 
+662 |   // Rendering a transparent pixel up-left. Thay way SVG area is well-covered (else the position starts at first real object, and that mess-ups everything)
+663 |   $env.paper.rect(0,0,1,1).attr({opacity: 0});
+664 | 
+665 |   $.elycharts[$options.type].init($env);
+666 | 
+667 |   return $env;
+668 | }
+669 | 
+670 | function _processGenericConfig($env, $options) {
+671 |   if ($options.style)
+672 |     $env.container.css($options.style);
+673 |   $env.width = $options.width ? $options.width : $env.container.width();
+674 |   $env.height = $options.height ? $options.height : $env.container.height();
+675 |   $env.paper.setSize($env.width, $env.height);
+676 | }
+677 | 
+678 | /**
+679 |  * Must be called in first call to .chart, to build the full config structure and normalize it.
+680 |  */
+681 | function _extendAndNormalizeOptions($options) {
+682 |   var k;
+683 |   // Compatibility with old $.elysia_charts.default_options and $.elysia_charts.templates
+684 |   if ($.elysia_charts) {
+685 |     if ($.elysia_charts.default_options)
+686 |       for (k in $.elysia_charts.default_options)
+687 |         $.elycharts.templates[k] = $.elysia_charts.default_options[k];
+688 |     if ($.elysia_charts.templates)
+689 |       for (k in $.elysia_charts.templates)
+690 |         $.elycharts.templates[k] = $.elysia_charts.templates[k];
+691 |   }
+692 | 
+693 |   // TODO Optimize extend cycle
+694 |   while ($options.template) {
+695 |     var d = $options.template;
+696 |     delete $options.template;
+697 |     $options = $.extend(true, {}, $.elycharts.templates[d], $options);
+698 |   }
+699 |   if (!$options.template && $options.type) {
+700 |     $options.template = $options.type;
+701 |     while ($options.template) {
+702 |       d = $options.template;
+703 |       delete $options.template;
+704 |       $options = $.extend(true, {}, $.elycharts.templates[d], $options);
+705 |     }
+706 |   }
+707 | 
+708 |   return _normalizeOptions($options, $options);
+709 | }
+710 | 
+711 | /**
+712 |  * Normalize options passed (primarly for backward compatibility)
+713 |  */
+714 | function _normalizeOptions($options, $fullopt) {
+715 |   if ($options.type == 'pie' || $options.type == 'funnel') {
+716 |     if ($options.values && $.isArray($options.values) && !$.isArray($options.values[0]))
+717 |       $options.values = { root : $options.values };
+718 |     if ($options.tooltips && $.isArray($options.tooltips) && !$.isArray($options.tooltips[0]))
+719 |       $options.tooltips = { root : $options.tooltips };
+720 |     if ($options.anchors && $.isArray($options.anchors) && !$.isArray($options.anchors[0]))
+721 |       $options.anchors = { root : $options.anchors };
+722 |     if ($options.balloons && $.isArray($options.balloons) && !$.isArray($options.balloons[0]))
+723 |       $options.balloons = { root : $options.balloons };
+724 |     if ($options.legend && $.isArray($options.legend) && !$.isArray($options.legend[0]))
+725 |       $options.legend = { root : $options.legend };
+726 |   }
+727 |   
+728 |   if ($options.defaultSeries) {
+729 |     var plotType = $options.defaultSeries.type ? $options.defaultSeries.type : ($fullopt.defaultSeries.type ? $fullopt.defaultSeries.type : $fullopt.type);
+730 |     _normalizeOptionsSerie($options.defaultSeries, $fullopt.type, plotType, $fullopt);
+731 |   }
+732 |     
+733 |   if ($options.series)
+734 |     for (var serie in $options.series) {
+735 |       var seriePlotType = $options.series[serie].type ? $options.series[serie].type : ($fullopt.series[serie].type ? $fullopt.series[serie].type : (plotType ? plotType : $fullopt.type));
+736 |       _normalizeOptionsSerie($options.series[serie], $fullopt.type, seriePlotType, $fullopt);
+737 |     }
+738 |     
+739 |   if ($options.type == 'line') {
+740 |     if (!$options.features)
+741 |       $options.features = {};
+742 |     if (!$options.features.grid)
+743 |       $options.features.grid = {};
+744 |   
+745 |     if (typeof $options.gridNX != 'undefined') {
+746 |       $options.features.grid.nx = $options.gridNX;
+747 |       delete $options.gridNX;
+748 |     }
+749 |     if (typeof $options.gridNY != 'undefined') {
+750 |       $options.features.grid.ny = $options.gridNY;
+751 |       delete $options.gridNY;
+752 |     }
+753 |     if (typeof $options.gridProps != 'undefined') {
+754 |       $options.features.grid.props = $options.gridProps;
+755 |       delete $options.gridProps;
+756 |     }
+757 |     if (typeof $options.gridExtra != 'undefined') {
+758 |       $options.features.grid.extra = $options.gridExtra;
+759 |       delete $options.gridExtra;
+760 |     }
+761 |     if (typeof $options.gridForceBorder != 'undefined') {
+762 |       $options.features.grid.forceBorder = $options.gridForceBorder;
+763 |       delete $options.gridForceBorder;
+764 |     }
+765 |     
+766 |     if ($options.defaultAxis && $options.defaultAxis.normalize && ($options.defaultAxis.normalize == 'auto' || $options.defaultAxis.normalize == 'autony'))
+767 |       $options.defaultAxis.normalize = 2;
+768 |     
+769 |     if ($options.axis)
+770 |       for (var axis in $options.axis)
+771 |         if ($options.axis[axis] && $options.axis[axis].normalize && ($options.axis[axis].normalize == 'auto' || $options.axis[axis].normalize == 'autony'))
+772 |           $options.axis[axis].normalize = 2;
+773 |   }
+774 | 
+775 |   return $options;
+776 | }
+777 | 
+778 | 
+779 | /**
+780 | * Manage "color" attribute, the stackedWith legacy and values "color" properties.
+781 | * @param $section Section part of external conf passed
+782 | * @param $type Chart type
+783 | * @param $plotType for line chart can be "line" or "bar", for other types is equal to chart type.
+784 | */
+785 | function _normalizeOptionsSerie($section, $type, $plotType, $fullopt) {
+786 |   if ($section.stackedWith) {
+787 |     $section.stacked = $section.stackedWith;
+788 |     delete $section.stackedWith;
+789 |   }
+790 | }
+791 | 
+792 | /***********************************************************************
+793 |  * COMMON
+794 |  **********************************************************************/
+795 | 
+796 | $.elycharts.common = {
+797 |   _RaphaelInstance : function(c, w, h) {
+798 |     var r = Raphael(c, w, h);
+799 | 
+800 |     r.customAttributes.slice = function (cx, cy, r, rint, aa1, aa2) {
+801 |       // Method body is for clockwise angles, but parameters passed are ccw
+802 |       a1 = 360 - aa2; a2 = 360 - aa1;
+803 |       //a1 = aa1; a2 = aa2;
+804 |       var flag = (a2 - a1) > 180;
+805 |       a1 = (a1 % 360) * Math.PI / 180;
+806 |       a2 = (a2 % 360) * Math.PI / 180;
+807 |       // a1 == a2  (but they where different before) means that there is a complete round (eg: 0-360). This should be shown
+808 |       if (a1 == a2 && aa1 != aa2)
+809 |         a2 += 359.99 * Math.PI / 180;
+810 |       
+811 |       return { path : rint ? [
+812 |         ["M", cx + r * Math.cos(a1), cy + r * Math.sin(a1)], 
+813 |         ["A", r, r, 0, +flag, 1, cx + r * Math.cos(a2), cy + r * Math.sin(a2)], 
+814 |         ["L", cx + rint * Math.cos(a2), cy + rint * Math.sin(a2)], 
+815 |         //["L", cx + rint * Math.cos(a1), cy + rint * Math.sin(a1)], 
+816 |         ["A", rint, rint, 0, +flag, 0, cx + rint * Math.cos(a1), cy + rint * Math.sin(a1)],
+817 |         ["z"]
+818 |       ] : [
+819 |         ["M", cx, cy], 
+820 |         ["l", r * Math.cos(a1), r * Math.sin(a1)], 
+821 |         ["A", r, r, 0, +flag, 1, cx + r * Math.cos(a2), cy + r * Math.sin(a2)], 
+822 |         ["z"]
+823 |       ] };
+824 |     };
+825 |     
+826 |     return r;
+827 |   },
+828 | 
+829 |   _clone : function(obj){
+830 |     if(obj == null || typeof(obj) != 'object')
+831 |       return obj;
+832 |     if (obj.constructor == Array)
+833 |       return [].concat(obj);
+834 |     var temp = new obj.constructor(); // changed (twice)
+835 |     for(var key in obj)
+836 |       temp[key] = this._clone(obj[key]);
+837 |     return temp;
+838 |   },
+839 |   
+840 |   compactUnits : function(val, units) {
+841 |     for (var i = units.length - 1; i >= 0; i--) {
+842 |       var v = val / Math.pow(1000, i + 1);
+843 |       //console.warn(i, units[i], v, v * 10 % 10);
+844 |       if (v >= 1 && v * 10 % 10 == 0)
+845 |         return v + units[i];
+846 |     }
+847 |     return val;
+848 |   },
+849 |   
+850 |   getElementOriginalAttrs : function(element) {
+851 |     var attr = $(element.node).data('original-attr');
+852 |     if (!attr) {
+853 |       attr = element.attr();
+854 |       $(element.node).data('original-attr', attr);
+855 |     }
+856 |     return attr;
+857 |   },
+858 |   
+859 |   findInPieces : function(pieces, section, serie, index, subsection) {
+860 |     for (var i = 0; i < pieces.length; i++) {
+861 |       if (
+862 |         (typeof section == undefined || section == -1 || section == false || pieces[i].section == section) &&
+863 |         (typeof serie == undefined || serie == -1 || serie == false || pieces[i].serie == serie) &&
+864 |         (typeof index == undefined || index == -1 || index == false || pieces[i].index == index) &&
+865 |         (typeof subsection == undefined || subsection == -1 || subsection == false || pieces[i].subSection == subsection)
+866 |       )
+867 |         return pieces[i];
+868 |     }
+869 |     return false;
+870 |   },
+871 |   
+872 |   samePiecePath : function(piece1, piece2) {
+873 |     return (((typeof piece1.section == undefined || piece1.section == -1 || piece1.section == false) && (typeof piece2.section == undefined || piece2.section == -1 || piece2.section == false)) || piece1.section == piece2.section) && 
+874 |       (((typeof piece1.serie == undefined || piece1.serie == -1 || piece1.serie == false) && (typeof piece2.serie == undefined || piece2.serie == -1 || piece2.serie == false)) || piece1.serie == piece2.serie) && 
+875 |       (((typeof piece1.index == undefined || piece1.index == -1 || piece1.index == false) && (typeof piece2.index == undefined || piece2.index == -1 || piece2.index == false)) || piece1.index == piece2.index) && 
+876 |       (((typeof piece1.subSection == undefined || piece1.subSection == -1 || piece1.subSection == false) && (typeof piece2.subSection == undefined || piece2.subSection == -1 || piece2.subSection == false)) || piece1.subSection == piece2.subSection);
+877 |   },
+878 |   
+879 |   executeIfChanged : function(env, changes) {
+880 |     if (!env.newopt)
+881 |       return true;
+882 |     
+883 |     for (var i = 0; i < changes.length; i++) {
+884 |       if (changes[i][changes[i].length - 1] == "*") {
+885 |         for (var j in env.newopt)
+886 |           if (j.substring(0, changes[i].length - 1) + "*" == changes[i])
+887 |             return true;
+888 |       }
+889 |       else if (changes[i] == 'series' && (env.newopt.series || env.newopt.defaultSeries))
+890 |         return true;
+891 |       else if (changes[i] == 'axis' && (env.newopt.axis || env.newopt.defaultAxis))
+892 |         return true;
+893 |       else if (changes[i] == 'width' && (env.oldwidth != env.width))
+894 |       	return true;
+895 |       else if (changes[i] == 'height' && (env.oldheight != env.height))
+896 |       	return true;
+897 |       else if (changes[i].substring(0, 9) == "features.") {
+898 |         changes[i] = changes[i].substring(9);
+899 |         if (env.newopt.features && env.newopt.features[changes[i]])
+900 |           return true;
+901 |       }
+902 |       else if (typeof env.newopt[changes[i]] != 'undefined')
+903 |         return true;
+904 |     }
+905 |     return false;
+906 |   },
+907 |   
+908 |   /**
+909 |    * Can be called for a whole serie or for a given index of the serie.
+910 |    * returns the color for that item considering valuesPalette, seriesPalette and inheritance
+911 |    */
+912 |   getItemColor : function(env, serie, index) {
+913 |     var props = this.areaProps(env, 'Series', serie, index);
+914 |     if (props.color) return props.color;
+915 |     if (index !== false && props.valuesPalette) return props.valuesPalette[index % props.valuesPalette.length];
+916 |     if (env.opt.seriesPalette) {
+917 |       var serieIndex = 0;
+918 |       for(seriekey in env.opt.values) {
+919 |         if (serie == seriekey) return env.opt.seriesPalette[serieIndex % env.opt.seriesPalette.length];
+920 |         else serieIndex++;
+921 |       }
+922 |     }
+923 |   },
+924 |   
+925 |   /**
+926 |    * Given an expandKey as array of array it sets the color to the nested tree unless it is already defined.
+927 |    * So [ [ 'parent', 'child' ], [ 'item' ] ] will try to put color in props.parent.child and props.item unless
+928 |    * they already exists.
+929 |    */
+930 |   colorize : function(env, props, expandKeys, color) {
+931 |     if (color) {
+932 |    	  for (k in expandKeys) {
+933 |    	    var p = props;
+934 |    	    var i = 0;
+935 |    	    for (i = 0; i < expandKeys[k].length - 1; i++) {
+936 |    	      if (!p[expandKeys[k][i]]) p[expandKeys[k][i]] = {};
+937 |    	      p = p[expandKeys[k][i]];
+938 |    	    }
+939 |    	    if (!p[expandKeys[k][expandKeys[k].length-1]]) p[expandKeys[k][expandKeys[k].length-1]] = color;
+940 |    	  }
+941 |     }
+942 |   },
+943 |   
+944 |   /**
+945 |    * Ottiene le proprietà di una "Area" definita nella configurazione (options),
+946 |    * identificata da section / serie / index / subsection, e facendo il merge
+947 |    * di tutti i defaults innestati.
+948 |    */
+949 |   areaProps : function(env, section, serie, index, subsection) {
+950 |     var props;
+951 | 
+952 |     var sectionProps = env.opt[section.toLowerCase()];
+953 |     // TODO fare una cache e fix del toLowerCase (devono solo fare la prima lettera
+954 |     if (!subsection) {
+955 |       if (typeof serie == 'undefined' || !serie)
+956 |         props = sectionProps;
+957 | 
+958 |       else {
+959 |     	var cacheKey = section+'/'+serie+'/'+index;
+960 |         if (env.cache && env.cache.areaPropsCache && env.cache.areaPropsCache[cacheKey]) {
+961 |           props = env.cache.areaPropsCache[cacheKey];
+962 |         }
+963 |         else {
+964 |           props = this._clone(env.opt['default' + section]);
+965 |           if (sectionProps && sectionProps[serie])
+966 |             props = $.extend(true, props, sectionProps[serie]);
+967 | 
+968 |           if ((typeof index != 'undefined') && index >= 0 && props['values'] && props['values'][index])
+969 |             props = $.extend(true, props, props['values'][index]);
+970 | 
+971 |           if (env.cache) {
+972 |             if (!env.cache.areaPropsCache) env.cache.areaPropsCache = {}; 
+973 |             env.cache.areaPropsCache[cacheKey] = props;
+974 |           }
+975 |         }
+976 |       }
+977 | 
+978 |     } else {
+979 |       var subsectionKey = subsection.toLowerCase();
+980 |       props = this._clone(env.opt[subsectionKey]);
+981 |       
+982 |       if (typeof serie == 'undefined' || !serie) {
+983 |         if (sectionProps && sectionProps[subsectionKey])
+984 |           props = $.extend(true, props, sectionProps[subsectionKey]);
+985 | 
+986 |       } else {
+987 |         if (env.opt['default' + section] && env.opt['default' + section][subsectionKey])
+988 |           props = $.extend(true, props, env.opt['default' + section][subsectionKey]);
+989 | 
+990 |         if (sectionProps && sectionProps[serie] && sectionProps[serie][subsectionKey])
+991 |           props = $.extend(true, props, sectionProps[serie][subsectionKey]);
+992 |         
+993 |         if ((typeof index != 'undefined') && index > 0 && props['values'] && props['values'][index])
+994 |           props = $.extend(true, props, props['values'][index]);
+995 |       }
+996 |     }
+997 |     
+998 |     return props;
+999 |   },
+1000 |   
+1001 |   _absrectpath : function(x1, y1, x2, y2, r) {
+1002 |     if (r) {
+1003 |       // we can use 'a' or 'Q' for the same result.
+1004 |       var res = [
+1005 |         ['M',x1,y1+r], ['a', r, r, 0, 0, 1, r, -r], //['Q',x1,y1, x1+r,y1],
+1006 |         ['L',x2-r,y1], ['a', r, r, 0, 0, 1, r, r], //['Q',x2,y1, x2,y1+r],
+1007 |         ['L',x2,y2-r], ['a', r, r, 0, 0, 1, -r, r], // ['Q',x2,y2, x2-r,y2],
+1008 |         ['L',x1+r,y2], ['a', r, r, 0, 0, 1, -r, -r], // ['Q',x1,y2, x1,y2-r],
+1009 |         ['z']
+1010 |       ];
+1011 |       return res;
+1012 |     } else return [['M', x1, y1], ['L', x1, y2], ['L', x2, y2], ['L', x2, y1], ['z']];
+1013 |   },
+1014 |   
+1015 |   _linepathAnchors : function(p1x, p1y, p2x, p2y, p3x, p3y, rounded) {
+1016 |     var method = 1;
+1017 |     if (rounded && rounded.length) {
+1018 |       method = rounded[1];
+1019 |       rounded = rounded[0];
+1020 |     }
+1021 |     if (!rounded)
+1022 |       rounded = 1;
+1023 |     var l1 = (p2x - p1x) / 2,
+1024 |         l2 = (p3x - p2x) / 2,
+1025 |         a = Math.atan(Math.abs(p2x - p1x) / Math.abs(p2y - p1y)),
+1026 |         b = Math.atan(Math.abs(p3x - p2x) / Math.abs(p2y - p3y));
+1027 |     a = (p1y < p2y && p2x > p1x) || (p1y > p2y && p2x < p1x) ? Math.PI - a : a;
+1028 |     b = (p3y < p2y && p3x > p2x) || (p3y > p2y && p3x < p2x) ? Math.PI - b : b;
+1029 |     if (method == 2) {
+1030 |       // If added by Bago to avoid curves beyond min or max
+1031 |       if ((a - Math.PI / 2) * (b - Math.PI / 2) > 0) {
+1032 |         a = 0;
+1033 |         b = 0;
+1034 |       } else {
+1035 |         if (Math.abs(a - Math.PI / 2) < Math.abs(b - Math.PI / 2))
+1036 |           b = Math.PI - a;
+1037 |         else
+1038 |           a = Math.PI - b;
+1039 |       }
+1040 |     }
+1041 | 
+1042 |     var alpha = Math.PI / 2 - ((a + b) % (Math.PI * 2)) / 2,
+1043 |         dx1 = l1 * Math.sin(alpha + a) / 2 / rounded,
+1044 |         dy1 = l1 * Math.cos(alpha + a) / 2 / rounded,
+1045 |         dx2 = l2 * Math.sin(alpha + b) / 2 / rounded,
+1046 |         dy2 = l2 * Math.cos(alpha + b) / 2 / rounded;
+1047 |     return {
+1048 |       x1: p2x - dx1,
+1049 |       y1: p2y + dy1,
+1050 |       x2: p2x + dx2,
+1051 |       y2: p2y + dy2
+1052 |     };
+1053 |   },
+1054 |   
+1055 |   _linepath : function ( points, rounded ) {
+1056 |     var path = [];
+1057 |     if (rounded) {
+1058 |       var anc = false;
+1059 |       for (var j = 0, jj = points.length; j < jj ; j++) {
+1060 |         var x = points[j][0], y = points[j][1];
+1061 |         if (x != null && y != null) {
+1062 |           if (anc) {
+1063 |             if (j + 1 != jj && points[j + 1][0] != null && points[j + 1][1] != null) {
+1064 |               var a = this._linepathAnchors(points[j - 1][0], points[j - 1][1], points[j][0], points[j][1], points[j + 1][0], points[j + 1][1], rounded);
+1065 |               path.push([ "C", anc[0], anc[1], a.x1, a.y1, points[j][0], points[j][1] ]);
+1066 |               // path.push([ "M", anc[0], anc[1] ]);
+1067 |               // path.push([ "L", a.x1, a.y1 ]);
+1068 |               // path.push([ "M", points[j][0], points[j][1] ]);
+1069 |               anc = [ a.x2, a.y2 ];
+1070 |             } else {
+1071 |               path.push([ "C", anc[0], anc[1], points[j][0], points[j][1], points[j][0], points[j][1] ]);
+1072 |               anc = [ points[j][0], points[j][1] ];
+1073 |             }
+1074 |           } else {
+1075 |             path.push([ "M", points[j][0], points[j][1] ]);
+1076 |             anc = [ points[j][0], points[j][1] ];
+1077 |           }
+1078 |         } else anc = false;
+1079 |       }
+1080 |       
+1081 |     } else {
+1082 |       var prevx = null;
+1083 |       var prevy = null;
+1084 |       for (var i = 0; i < points.length; i++) {
+1085 |         var x = points[i][0], y = points[i][1];
+1086 |         if (x != null && y != null) {
+1087 |         	path.push([prevx == null || prevy == null ? "M" : "L", x, y]);
+1088 |         }
+1089 |         prevx = x;
+1090 |         prevy = y;
+1091 |       }
+1092 |     }
+1093 |     
+1094 |     return path;
+1095 |   },
+1096 | 
+1097 |   _lineareapath : function (points1, points2, rounded) {
+1098 |     var path = this._linepath(points1, rounded);
+1099 |     var path2 = this._linepath(points2.reverse(), rounded);
+1100 |     var finalPath = [];
+1101 |     var firstPushed = null;
+1102 |     for (var i = 0; i <= path.length; i++) {
+1103 |       if (i == path.length || path[i][0] == "M") {
+1104 |     	  if (firstPushed != null) {
+1105 |     		for (var j = path.length - i; j <= path.length - firstPushed; j++) {
+1106 |       		  if (path2[j][0] == "M") finalPath.push([ "L", path2[j][1], path2[j][2] ]);
+1107 |       		  else finalPath.push(path2[j]);
+1108 |     		}
+1109 |     		finalPath.push(['z']);
+1110 |     	    firstPushed = null;
+1111 |     	  }
+1112 |     	  if (i != path.length) finalPath.push(path[i]);
+1113 |       } else {
+1114 |     	  finalPath.push(path[i]);
+1115 |     	  if (firstPushed == null) firstPushed = i;
+1116 |       }
+1117 |     }
+1118 |     return finalPath;
+1119 |   },
+1120 |   
+1121 |   /**
+1122 |    * Prende la coordinata X di un passo di un path
+1123 |    */
+1124 |   getX : function(p, pos) {
+1125 |     switch (p[0]) {
+1126 |       case 'CIRCLE':
+1127 |         return p[1];
+1128 |       case 'RECT':
+1129 |         return p[!pos ? 1 : 3];
+1130 |       case 'SLICE':
+1131 |         return p[1];
+1132 |       default:
+1133 |         return p[p.length - 2];
+1134 |     }
+1135 |   },
+1136 | 
+1137 |   /**
+1138 |    * Prende la coordinata Y di un passo di un path
+1139 |    */
+1140 |   getY : function(p, pos) {
+1141 |     switch (p[0]) {
+1142 |       case 'CIRCLE':
+1143 |         return p[2];
+1144 |       case 'RECT':
+1145 |         return p[!pos ? 2 : 4];
+1146 |       case 'SLICE':
+1147 |         return p[2];
+1148 |       default:
+1149 |         return p[p.length - 1];
+1150 |     }
+1151 |   },
+1152 |   
+1153 |   /**
+1154 |    * Prende il centro di un path
+1155 |    * 
+1156 |    * @param offset un offset [x,y] da applicare. Da notare che gli assi potrebbero essere dipendenti dalla figura 
+1157 |    *        (ad esempio per lo SLICE x e' l'asse che passa dal centro del cerchio, y l'ortogonale).
+1158 |    */
+1159 |   getCenter: function(path, offset) {
+1160 |     if (!path.path)
+1161 |       return false;
+1162 |     if (path.path.length == 0)
+1163 |       return false;
+1164 |     if (!offset)
+1165 |       offset = [0, 0];
+1166 |       
+1167 |     if (path.center)
+1168 |       return [path.center[0] + offset[0], path.center[1] + offset[1]];
+1169 |       
+1170 |     var p = path.path[0];
+1171 |     switch (p[0]) {
+1172 |       case 'CIRCLE':
+1173 |         return [p[1] + offset[0], p[2] + offset[1]];
+1174 |       case 'RECT':
+1175 |         return [(p[1] + p[2])/2 + offset[0], (p[3] + p[4])/2 + offset[1]];
+1176 |       case 'SLICE':
+1177 |         var popangle = p[5] + (p[6] - p[5]) / 2;
+1178 |         var rad = Math.PI / 180;
+1179 |         return [
+1180 |           p[1] + (p[4] + ((p[3] - p[4]) / 2) + offset[0]) * Math.cos(-popangle * rad) + offset[1] * Math.cos((-popangle-90) * rad), 
+1181 |           p[2] + (p[4] + ((p[3] - p[4]) / 2) + offset[0]) * Math.sin(-popangle * rad) + offset[1] * Math.sin((-popangle-90) * rad)
+1182 |         ];
+1183 |     }
+1184 |     
+1185 |     // WARN Complex paths not supported
+1186 |     alert('ElyCharts: getCenter with complex path not supported');
+1187 |     
+1188 |     return false;
+1189 |   },
+1190 |   
+1191 |   /**
+1192 |    * Sposta il path passato di un offset [x,y]
+1193 |    * Il risultato e' il nuovo path
+1194 |    * 
+1195 |    * @param offset un offset [x,y] da applicare. Da notare che gli assi potrebbero essere dipendenti dalla figura 
+1196 |    *        (ad esempio per lo SLICE x e' l'asse che passa dal centro del cerchio, y l'ortogonale).
+1197 |    * @param marginlimit se true non sposta oltre i margini del grafico (applicabile solo su path standard o RECT)
+1198 |    * @param simple se true lo spostamento e' sempre fatto sul sistema [x, y] complessivo (altrimenti alcuni elementi, come lo SLICE,
+1199 |    *        si muovono sul proprio sistema di coordinate - la x muove lungo il raggio e la y lungo l'ortogonale)
+1200 |    */
+1201 |   movePath : function(env, path, offset, marginlimit, simple) {
+1202 |     var p = [], i;
+1203 |     if (path.length == 1 && path[0][0] == 'RECT')
+1204 |       return [ [path[0][0], this._movePathX(env, path[0][1], offset[0], marginlimit), this._movePathY(env, path[0][2], offset[1], marginlimit), this._movePathX(env, path[0][3], offset[0], marginlimit), this._movePathY(env, path[0][4], offset[1], marginlimit), path[0][5]] ];
+1205 |     if (path.length == 1 && path[0][0] == 'SLICE') {
+1206 |       if (!simple) {
+1207 |         var popangle = path[0][5] + (path[0][6] - path[0][5]) / 2;
+1208 |         var rad = Math.PI / 180;
+1209 |         var x = path[0][1] + offset[0] * Math.cos(- popangle * rad) + offset[1] * Math.cos((-popangle-90) * rad);
+1210 |         var y = path[0][2] + offset[0] * Math.sin(- popangle * rad) + offset[1] * Math.cos((-popangle-90) * rad);
+1211 |         return [ [path[0][0], x, y, path[0][3], path[0][4], path[0][5], path[0][6] ] ];
+1212 |       }
+1213 |       else
+1214 |         return [ [ path[0][0], path[0][1] + offset[0], path[0][2] + offset[1], path[0][3], path[0][4], path[0][5], path[0][6] ] ];
+1215 |     }
+1216 |     if (path.length == 1 && path[0][0] == 'CIRCLE')
+1217 |       return [ [ path[0][0], path[0][1] + offset[0], path[0][2] + offset[1], path[0][3] ] ];
+1218 |     if (path.length == 1 && path[0][0] == 'TEXT')
+1219 |       return [ [ path[0][0], path[0][1], path[0][2] + offset[0], path[0][3] + offset[1] ] ];
+1220 |     if (path.length == 1 && path[0][0] == 'LINE') {
+1221 |       for (i = 0; i < path[0][1].length; i++)
+1222 |         p.push( [ this._movePathX(env, path[0][1][i][0], offset[0], marginlimit), this._movePathY(env, path[0][1][i][1], offset[1], marginlimit) ] );
+1223 |       return [ [ path[0][0], p, path[0][2] ] ];
+1224 |     }
+1225 |     if (path.length == 1 && path[0][0] == 'LINEAREA') {
+1226 |       for (i = 0; i < path[0][1].length; i++)
+1227 |         p.push( [ this._movePathX(env, path[0][1][i][0], offset[0], marginlimit), this._movePathY(env, path[0][1][i][1], offset[1], marginlimit) ] );
+1228 |       var pp = [];
+1229 |       for (i = 0; i < path[0][2].length; i++)
+1230 |         pp.push( [ this._movePathX(env, path[0][2][i][0], offset[0], marginlimit), this._movePathY(env, path[0][2][i][1], offset[1], marginlimit) ] );
+1231 |       return [ [ path[0][0], p, pp, path[0][3] ] ];
+1232 |     }
+1233 | 
+1234 |     var newpath = [];
+1235 |     // http://www.w3.org/TR/SVG/paths.html#PathData
+1236 |     for (var j = 0; j < path.length; j++) {
+1237 |       var o = path[j];
+1238 |       switch (o[0]) {
+1239 |         // TODO the translation for lowercase actions are all wrong!
+1240 |         // relative movements do not need to be adjusted for moving (or at most, only the first one have to).
+1241 |         // TODO relative movements this way cannot be forced to stay in marginlimit!
+1242 |         case 'M': case 'm': case 'L': case 'l': case 'T': case 't':
+1243 |           // (x y)+
+1244 |           newpath.push([o[0], this._movePathX(env, o[1], offset[0], marginlimit), this._movePathY(env, o[2], offset[1], marginlimit)]);
+1245 |           break;
+1246 |         case 'A': case 'a':
+1247 |           // (rx ry x-axis-rotation large-arc-flag sweep-flag x y)+
+1248 |           newpath.push([o[0], o[1], o[2], o[3], o[4], o[5], this._movePathX(env, o[6], offset[0], marginlimit), this._movePathY(env, o[7], offset[1], marginlimit)]);
+1249 |           break;
+1250 |         case 'C': case 'c':
+1251 |           // Fixed for uppercase C in 2.1.5
+1252 |           // (x1 y1 x2 y2 x y)+
+1253 |           newpath.push([o[0], 
+1254 |             this._movePathX(env, o[1], offset[0], marginlimit), this._movePathY(env, o[2], offset[1], marginlimit),
+1255 |             this._movePathX(env, o[3], offset[0], marginlimit), this._movePathY(env, o[4], offset[1], marginlimit),
+1256 |             this._movePathX(env, o[5], offset[0], marginlimit), this._movePathY(env, o[6], offset[1], marginlimit)
+1257 |           ]);
+1258 |           break;
+1259 |         case 'S': case 's': case 'Q': case 'q':
+1260 |           // Fixed for uppercase Q in 2.1.5
+1261 |           // (x1 y1 x y)+
+1262 |           // newpath.push([o[0], o[1], o[2], this._movePathX(env, o[3], offset[0], marginlimit), this._movePathY(env, o[4], offset[1], marginlimit)]);
+1263 |           newpath.push([o[0], 
+1264 |             this._movePathX(env, o[1], offset[0], marginlimit), this._movePathY(env, o[2], offset[1], marginlimit), 
+1265 |             this._movePathX(env, o[3], offset[0], marginlimit), this._movePathY(env, o[4], offset[1], marginlimit)
+1266 |           ]);
+1267 |           break;
+1268 |         case 'z': case 'Z':
+1269 |           newpath.push([o[0]]);
+1270 |           break;
+1271 |       }
+1272 |     }
+1273 |     
+1274 |     return newpath;
+1275 |   },
+1276 |   
+1277 |   _movePathX : function(env, x, dx, marginlimit) {
+1278 |     if (x == null) return null;
+1279 |     if (!marginlimit)
+1280 |       return x + dx;
+1281 |     x = x + dx;
+1282 |     return dx > 0 && x > env.width - env.opt.margins[1] ? env.width - env.opt.margins[1] : (dx < 0 && x < env.opt.margins[3] ? env.opt.margins[3] : x);
+1283 |   },
+1284 |   
+1285 |   _movePathY : function(env, y, dy, marginlimit) {
+1286 |     if (y == null) return null;
+1287 |     if (!marginlimit)
+1288 |       return y + dy;
+1289 |     y = y + dy;
+1290 |     return dy > 0 && y > env.height - env.opt.margins[2] ? env.height - env.opt.margins[2] : (dy < 0 && y < env.opt.margins[0] ? env.opt.margins[0] : y);
+1291 |   },
+1292 | 
+1293 |   /**
+1294 |    * Ritorna le proprieta SVG da impostare per visualizzare il path non SVG passato (se applicabile, per CIRCLE e TEXT non lo e')
+1295 |    */
+1296 |   getSVGProps : function(env, origPath, prevprops) {
+1297 |     var path = this._preparePathShow(env, origPath);
+1298 |     var props = prevprops ? prevprops : {};
+1299 |     var type = 'path', value;
+1300 | 
+1301 |     if (path.length == 1 && path[0][0] == 'RECT')
+1302 |       value = common._absrectpath(path[0][1], path[0][2], path[0][3], path[0][4], path[0][5]);
+1303 |     else if (path.length == 1 && path[0][0] == 'SLICE') {
+1304 |       type = 'slice';
+1305 |       value = [ path[0][1], path[0][2], path[0][3], path[0][4], path[0][5], path[0][6] ];
+1306 |     } else if (path.length == 1 && path[0][0] == 'LINE')
+1307 |       value = common._linepath( path[0][1], path[0][2] );
+1308 |     else if (path.length == 1 && path[0][0] == 'LINEAREA')
+1309 |       value = common._lineareapath( path[0][1], path[0][2], path[0][3] );
+1310 |     else if (path.length == 1 && (path[0][0] == 'CIRCLE' || path[0][0] == 'TEXT' || path[0][0] == 'DOMELEMENT' || path[0][0] == 'RELEMENT'))
+1311 |       return prevprops ? prevprops : false;
+1312 |     else
+1313 |       value = path;
+1314 | 
+1315 |     if (type != 'path' || (value && value.length > 0))
+1316 |       props[type] = value;
+1317 |     else if (!prevprops)
+1318 |       return false;
+1319 |     return props;
+1320 |   },
+1321 |   
+1322 |   /**
+1323 |    * Disegna il path passato
+1324 |    * Gestisce la feature pixelWorkAround
+1325 |    */
+1326 |   showPath : function(env, path, paper) {
+1327 |     
+1328 |     if (!paper)
+1329 |       paper = env.paper;
+1330 |     if (path.length == 1 && path[0][0] == 'CIRCLE') {
+1331 |       path = this._preparePathShow(env, path);
+1332 |       return paper.circle(path[0][1], path[0][2], path[0][3]);
+1333 |     }
+1334 |     if (path.length == 1 && path[0][0] == 'TEXT') {
+1335 |       path = this._preparePathShow(env, path);
+1336 |       return paper.text(path[0][2], path[0][3], path[0][1]);
+1337 |     }
+1338 | 
+1339 |     var props = this.getSVGProps(env, path);
+1340 | 
+1341 |     // Props must be with some data in it
+1342 |     var hasdata = false;
+1343 |     for (var k in props) {
+1344 |       hasdata = true;
+1345 |       break;
+1346 |     }
+1347 |     return props && hasdata ? paper.path().attr(props) : false;
+1348 |   },
+1349 |   
+1350 |   /**
+1351 |    * Applica al path le modifiche per poterlo visualizzare
+1352 |    * Per ora applica solo pixelWorkAround
+1353 |    */
+1354 |   _preparePathShow : function(env, path) {
+1355 |     return env.opt.features.pixelWorkAround.active ? this.movePath(env, this._clone(path), [.5, .5], false, true) : path;
+1356 |   },
+1357 |   
+1358 |   /**
+1359 |    * Ritorna gli attributi Raphael completi di un piece
+1360 |    * Per attributi completi si intende l'insieme di attributi specificato, 
+1361 |    * assieme a tutti gli attributi calcolati che determinano lo stato 
+1362 |    * iniziale di un piece (e permettono di farlo ritornare a tale stato).
+1363 |    * In genere viene aggiunto il path SVG, per il circle vengono aggiunti
+1364 |    * i dati x,y,r
+1365 |    */
+1366 |   getPieceFullAttr : function(env, piece) {
+1367 |     if (!piece.fullattr) {
+1368 |       piece.fullattr = this._clone(piece.attr);
+1369 |       if (piece.path)
+1370 |         switch (piece.path[0][0]) {
+1371 |           case 'CIRCLE':
+1372 |             var ppath = this._preparePathShow(env, piece.path);
+1373 |             piece.fullattr.cx = ppath[0][1];
+1374 |             piece.fullattr.cy = ppath[0][2];
+1375 |             piece.fullattr.r = ppath[0][3];
+1376 |             break;
+1377 |           case 'TEXT': case 'DOMELEMENT': case 'RELEMENT':
+1378 |             break;
+1379 |           default:
+1380 |             piece.fullattr = this.getSVGProps(env, piece.path, piece.fullattr);
+1381 |         }
+1382 |       if (typeof piece.fullattr.opacity == 'undefined')
+1383 |         piece.fullattr.opacity = 1;
+1384 |     }
+1385 |     return piece.fullattr;
+1386 |   },
+1387 | 
+1388 | 
+1389 |   _show : function(env, origPieces) {
+1390 |     if ($.elycharts.featuresmanager) $.elycharts.featuresmanager.beforeShow(env, origPieces);
+1391 |     
+1392 |     pieces = this._getSortedPathData(origPieces);
+1393 | 
+1394 |     this._animationStackStart(env);
+1395 | 
+1396 |     var previousElement = false;
+1397 |     for (var i = 0; i < pieces.length; i++) {
+1398 |       var piece = pieces[i];
+1399 |       if ((typeof piece.show == 'undefined' || piece.show) && (typeof piece.parent == 'undefined' || typeof piece.parent.show == 'undefined' || piece.parent.show)) {
+1400 |         // If there is piece.animation.element, this is the old element that must be transformed to the new one
+1401 |         piece.element = piece.animation && piece.animation.element ? piece.animation.element : false;
+1402 |         piece.hide = false;
+1403 | 
+1404 |         if (!piece.path) {
+1405 |           // Element should not be shown or must be hidden: nothing to prepare
+1406 |           piece.hide = true;
+1407 | 
+1408 |         } else if (piece.path.length == 1 && piece.path[0][0] == 'TEXT') {
+1409 |           // TEXT
+1410 |           // Animation is not supported, so if there's an old element i must hide it (with force = true to hide it for sure, even if there's a new version of same element)
+1411 |           if (piece.element) {
+1412 |             common.animationStackPush(env, piece, piece.element, false, piece.animation.speed, piece.animation.easing, piece.animation.delay, true);
+1413 |             piece.animation.element = false;
+1414 |           }
+1415 |           piece.element = this.showPath(env, piece.path);
+1416 |           // If this is a transition i must position new element
+1417 |           if (piece.element && env.newopt && previousElement)
+1418 |             piece.element.insertAfter(previousElement);
+1419 | 
+1420 |         } else if (piece.path.length == 1 && piece.path[0][0] == 'DOMELEMENT') {
+1421 |           // DOMELEMENT
+1422 |           // Already shown
+1423 |           // Animation not supported
+1424 | 
+1425 |         } else if (piece.path.length == 1 && piece.path[0][0] == 'RELEMENT') {
+1426 |           // RAPHAEL ELEMENT
+1427 |           // Already shown
+1428 |           // Animation is not supported, so if there's an old element i must hide it (with force = true to hide it for sure, even if there's a new version of same element)
+1429 |           if (piece.element) {
+1430 |             common.animationStackPush(env, piece, piece.element, false, piece.animation.speed, piece.animation.easing, piece.animation.delay, true);
+1431 |             piece.animation.element = false;
+1432 |           }
+1433 | 
+1434 |           piece.element = piece.path[0][1];
+1435 |           if (piece.element && previousElement)
+1436 |             piece.element.insertAfter(previousElement);
+1437 |           piece.attr = false;
+1438 | 
+1439 |         } else {
+1440 |           // OTHERS
+1441 |           if (!piece.element) {
+1442 |             if (piece.animation && piece.animation.startPath && piece.animation.startPath.length)
+1443 |               piece.element = this.showPath(env, piece.animation.startPath);
+1444 |             else
+1445 |               piece.element = this.showPath(env, piece.path);
+1446 | 
+1447 |             // If this is a transition i must position new element
+1448 |             if (piece.element && env.newopt && previousElement)
+1449 |               piece.element.insertAfter(previousElement);
+1450 |           }
+1451 |         }
+1452 | 
+1453 |         if (piece.element) {
+1454 |           if (piece.attr) {
+1455 |             if (!piece.animation) {
+1456 |               // Standard piece visualization
+1457 |               if (typeof piece.attr.opacity == 'undefined')
+1458 |                 piece.attr.opacity = 1;
+1459 |               piece.element.attr(piece.attr);
+1460 | 
+1461 |             } else {
+1462 |               // Piece animation
+1463 |               if (!piece.animation.element)
+1464 |                 piece.element.attr(piece.animation.startAttr ? piece.animation.startAttr : piece.attr);
+1465 |               //if (typeof animationAttr.opacity == 'undefined')
+1466 |               //  animationAttr.opacity = 1;
+1467 |               common.animationStackPush(env, piece, piece.element, this.getPieceFullAttr(env, piece), piece.animation.speed, piece.animation.easing, piece.animation.delay);
+1468 |             }
+1469 |           } else if (piece.hide)
+1470 |             // Hide the piece
+1471 |             common.animationStackPush(env, piece, piece.element, false, piece.animation.speed, piece.animation.easing, piece.animation.delay);
+1472 | 
+1473 |           previousElement = piece.element;
+1474 |         }
+1475 |       }
+1476 |     }
+1477 | 
+1478 |     this._animationStackEnd(env);
+1479 |     
+1480 |     if ($.elycharts.featuresmanager) $.elycharts.featuresmanager.afterShow(env, origPieces);
+1481 |   },
+1482 | 
+1483 |   /**
+1484 |    * Given an array of pieces, return an array of single pathdata contained in pieces, sorted by zindex
+1485 |    */
+1486 |   _getSortedPathData : function(pieces) {
+1487 |     res = [];
+1488 | 
+1489 |     for (var i = 0; i < pieces.length; i++) {
+1490 |       var piece = pieces[i];
+1491 |       if (piece.paths) {
+1492 |         for (var j = 0; j < piece.paths.length; j++) {
+1493 |           piece.paths[j].pos = res.length;
+1494 |           piece.paths[j].parent = piece;
+1495 |           res.push(piece.paths[j]);
+1496 |         }
+1497 |       } else {
+1498 |         piece.pos = res.length;
+1499 |         piece.parent = false;
+1500 |         res.push(piece);
+1501 |       }
+1502 |     }
+1503 |     return res.sort(function (a, b) {
+1504 |       var za = typeof a.attr == 'undefined' || typeof a.attr.zindex == 'undefined' ? ( !a.parent || typeof a.parent.attr == 'undefined' || typeof a.parent.attr.zindex == 'undefined' ? 0 : a.parent.attr.zindex ) : a.attr.zindex;
+1505 |       var zb = typeof b.attr == 'undefined' || typeof b.attr.zindex == 'undefined' ? ( !b.parent || typeof b.parent.attr == 'undefined' || typeof b.parent.attr.zindex == 'undefined' ? 0 : b.parent.attr.zindex ) : b.attr.zindex;
+1506 |       return za < zb ? -1 : (za > zb ? 1 : (a.pos < b.pos ? -1 : (a.pos > b.pos ? 1 : 0)));
+1507 |     });
+1508 |   },
+1509 | 
+1510 |   _animationStackStart : function(env) {
+1511 |     if (!env.animationStackDepth || env.animationStackDepth == 0) {
+1512 |       env.animationStackDepth = 0;
+1513 |       env.animationStack = {};
+1514 |     }
+1515 |     env.animationStackDepth ++;
+1516 |   },
+1517 | 
+1518 |   _animationStackEnd : function(env) {
+1519 |     env.animationStackDepth --;
+1520 |     if (env.animationStackDepth == 0) {
+1521 |       for (var delay in env.animationStack) {
+1522 |         this._animationStackAnimate(env.animationStack[delay], delay);
+1523 |         delete env.animationStack[delay];
+1524 |       }
+1525 |       env.animationStack = {};
+1526 |     }
+1527 |   },
+1528 | 
+1529 |   /**
+1530 |    * Inserisce l'animazione richiesta nello stack di animazioni.
+1531 |    * Nel caso lo stack non sia inizializzato esegue subito l'animazione.
+1532 |    */ 
+1533 |   animationStackPush : function(env, piece, element, newattr, speed, easing, delay, force) {
+1534 |     if (typeof delay == 'undefined')
+1535 |       delay = 0;
+1536 | 
+1537 |     if (!env.animationStackDepth || env.animationStackDepth == 0) {
+1538 |       this._animationStackAnimate([{piece : piece, object : element, props : newattr, speed: speed, easing : easing, force : force}], delay);
+1539 | 
+1540 |     } else {
+1541 |       if (!env.animationStack[delay])
+1542 |         env.animationStack[delay] = [];
+1543 |       
+1544 |       env.animationStack[delay].push({piece : piece, object : element, props : newattr, speed: speed, easing : easing, force : force});
+1545 |     }
+1546 |   },
+1547 |   
+1548 |   _animationStackAnimate : function(stack, delay) {
+1549 |     var caller = this;
+1550 |     var func = function() {
+1551 |       var a = stack.pop();
+1552 |       var anim = caller._animationStackAnimateElement(a);
+1553 |       
+1554 |       while (stack.length > 0) {
+1555 |         var b = stack.pop();
+1556 |         caller._animationStackAnimateElement(b, a, anim);
+1557 |       }
+1558 |     }
+1559 |     if (delay > 0) 
+1560 |       setTimeout(func, delay);
+1561 |     else
+1562 |       func();
+1563 |   },
+1564 |   
+1565 |   _animationStackAnimateElement : function (a, awith, awithanim) {
+1566 |     //console.warn('call', a.piece.animationInProgress, a.force, a.piece.path, a.piece);
+1567 | 
+1568 |     if (a.force || !a.piece.animationInProgress) {
+1569 |       
+1570 |       // Metodo non documentato per bloccare l'animazione corrente
+1571 |       a.object.stop();
+1572 |       if (!a.props)
+1573 |         a.props = { opacity : 0 }; // TODO Sarebbe da rimuovere l'elemento alla fine
+1574 |         
+1575 |       if (!a.speed || a.speed <= 0) {
+1576 |         //console.warn('direct');
+1577 |         a.object.attr(a.props);
+1578 |         a.piece.animationInProgress = false;
+1579 |         return;
+1580 |       }
+1581 |         
+1582 |       a.piece.animationInProgress = true;
+1583 |       //console.warn('START', a.piece.animationInProgress, a.piece.path, a.piece);
+1584 |         
+1585 |       // NOTA onEnd non viene chiamato se l'animazione viene bloccata con stop
+1586 |       var onEnd = function() { 
+1587 |         //console.warn('END', a.piece.animationInProgress, a.piece); 
+1588 |         a.piece.animationInProgress = false 
+1589 |       }
+1590 |       
+1591 |       if (Raphael.animation) {
+1592 |       	var anim = Raphael.animation(a.props, a.speed, a.easing ? a.easing : 'linear', onEnd);
+1593 |         if (awith) {
+1594 |           // console.warn('animateWith', awith, awithanim, anim);
+1595 |           a.object.animateWith(awith, awithanim, anim);
+1596 |         } else {
+1597 |       	  // console.warn('animate', anim);
+1598 |           a.object.animate(anim);
+1599 |         }
+1600 |       	return anim;
+1601 |       } else {
+1602 |         if (awith) {
+1603 |           // console.warn('animateWith', awith, awithanim, anim);
+1604 |           a.object.animateWith(awith, a.props, a.speed, a.easing ? a.easing : 'linear', onEnd);
+1605 |         } else {
+1606 |       	  // console.warn('animate', anim);
+1607 |           a.object.animate(a.props, a.speed, a.easing ? a.easing : 'linear', onEnd);
+1608 |         }
+1609 |         return null;
+1610 |       }
+1611 |     }
+1612 |     //else console.warn('SKIP', a.piece.animationInProgress, a.piece.path, a.piece);
+1613 |     return null;
+1614 |   }
+1615 | }
+1616 | 
+1617 | var common = $.elycharts.common;
+1618 | 
+1619 | /***********************************************************************
+1620 |  * FEATURESMANAGER
+1621 |  **********************************************************************/
+1622 | 
+1623 | $.elycharts.featuresmanager = {
+1624 |   
+1625 |   managers : [],
+1626 |   initialized : false,
+1627 |   
+1628 |   register : function(manager, priority) {
+1629 |     $.elycharts.featuresmanager.managers.push([priority, manager]);
+1630 |     $.elycharts.featuresmanager.initialized = false;
+1631 |   },
+1632 |   
+1633 |   init : function() {
+1634 |     $.elycharts.featuresmanager.managers.sort(function(a, b) { return a[0] < b[0] ? -1 : (a[0] == b[0] ? 0 : 1) });
+1635 |     $.elycharts.featuresmanager.initialized = true;
+1636 |   },
+1637 |   
+1638 |   clear : function(env) {
+1639 |     if (!$.elycharts.featuresmanager.initialized)
+1640 |       this.init();
+1641 |     // reverse cycle over manager
+1642 |     for (var i = $.elycharts.featuresmanager.managers.length - 1; i >= 0; i--)
+1643 |       if ($.elycharts.featuresmanager.managers[i][1].clear)
+1644 |         $.elycharts.featuresmanager.managers[i][1].clear(env);
+1645 |   },
+1646 |   
+1647 |   beforeShow : function(env, pieces) {
+1648 |     if (!$.elycharts.featuresmanager.initialized)
+1649 |       this.init();
+1650 |     for (var i = 0; i < $.elycharts.featuresmanager.managers.length; i++)
+1651 |       if ($.elycharts.featuresmanager.managers[i][1].beforeShow)
+1652 |         $.elycharts.featuresmanager.managers[i][1].beforeShow(env, pieces);
+1653 |   },
+1654 |   
+1655 |   afterShow : function(env, pieces) {
+1656 |     if (!$.elycharts.featuresmanager.initialized)
+1657 |       this.init();
+1658 |     for (var i = 0; i < $.elycharts.featuresmanager.managers.length; i++)
+1659 |       if ($.elycharts.featuresmanager.managers[i][1].afterShow)
+1660 |         $.elycharts.featuresmanager.managers[i][1].afterShow(env, pieces);
+1661 |   },
+1662 | 
+1663 |   onMouseOver : function(env, serie, index, mouseAreaData) {
+1664 |     if (!$.elycharts.featuresmanager.initialized)
+1665 |       this.init();
+1666 |     for (var i = 0; i < $.elycharts.featuresmanager.managers.length; i++)
+1667 |       if ($.elycharts.featuresmanager.managers[i][1].onMouseOver)
+1668 |         $.elycharts.featuresmanager.managers[i][1].onMouseOver(env, serie, index, mouseAreaData);
+1669 |   },
+1670 |   
+1671 |   onMouseOut : function(env, serie, index, mouseAreaData) {
+1672 |     if (!$.elycharts.featuresmanager.initialized)
+1673 |       this.init();
+1674 |     for (var i = 0; i < $.elycharts.featuresmanager.managers.length; i++)
+1675 |       if ($.elycharts.featuresmanager.managers[i][1].onMouseOut)
+1676 |         $.elycharts.featuresmanager.managers[i][1].onMouseOut(env, serie, index, mouseAreaData);
+1677 |   },
+1678 |   
+1679 |   onMouseEnter : function(env, serie, index, mouseAreaData) {
+1680 |     if (!$.elycharts.featuresmanager.initialized)
+1681 |       this.init();
+1682 |     for (var i = 0; i < $.elycharts.featuresmanager.managers.length; i++)
+1683 |       if ($.elycharts.featuresmanager.managers[i][1].onMouseEnter)
+1684 |         $.elycharts.featuresmanager.managers[i][1].onMouseEnter(env, serie, index, mouseAreaData);
+1685 |   },
+1686 |   
+1687 |   onMouseChanged : function(env, serie, index, mouseAreaData) {
+1688 |     if (!$.elycharts.featuresmanager.initialized)
+1689 |       this.init();
+1690 |     for (var i = 0; i < $.elycharts.featuresmanager.managers.length; i++)
+1691 |       if ($.elycharts.featuresmanager.managers[i][1].onMouseChanged)
+1692 |         $.elycharts.featuresmanager.managers[i][1].onMouseChanged(env, serie, index, mouseAreaData);
+1693 |   },
+1694 |   
+1695 |   onMouseExit : function(env, serie, index, mouseAreaData) {
+1696 |     if (!$.elycharts.featuresmanager.initialized)
+1697 |       this.init();
+1698 |     for (var i = 0; i < $.elycharts.featuresmanager.managers.length; i++)
+1699 |       if ($.elycharts.featuresmanager.managers[i][1].onMouseExit)
+1700 |         $.elycharts.featuresmanager.managers[i][1].onMouseExit(env, serie, index, mouseAreaData);
+1701 |   }
+1702 | }
+1703 | 
+1704 | })(jQuery);
+1705 | 
+1706 | /***********************************************
+1707 | 
+1708 | * OGGETTI USATI:
+1709 | 
+1710 | PIECE:
+1711 | Contiene un elemento da visualizzare nel grafico. E' un oggetto con queste proprietà:
+1712 | 
+1713 | - section,[serie],[index],[subsection]: Dati che permettono di identificare che tipo
+1714 |   di elemento è e a quale blocco della configurazione appartiene.
+1715 |   Ad esempio gli elementi principali del chart hanno
+1716 |   section="Series", serie=nome della serie, subSection = 'Plot'
+1717 | - [paths]: Contiene un array di pathdata, nel caso questo piece è costituito da 
+1718 |   piu' sottoelementi (ad esempio i Dots, o gli elementi di un Pie o Funnel)
+1719 | - [PATHDATA.*]: Se questo piece e' costituito da un solo elemento, i suoi dati sono
+1720 |   memorizzati direttamente nella root di PIECE.
+1721 | - show: Proprieta' usata internamente per decidere se questo piece dovrà essere
+1722 |   visualizzato o meno (in genere nel caso di una transizione che non ha variato
+1723 |   questo piece, che quindi puo' essere lasciato allo stato precedente)
+1724 | - hide: Proprieta' usata internamente per decidere se l'elemento va nascosto,
+1725 |   usato in caso di transizione se l'elemento non è piu' presente.
+1726 | 
+1727 | PATHDATA:
+1728 | I dati utili per visualizzare un path nel canvas:
+1729 | 
+1730 | - PATH: Il path che permette di disegnare l'elemento. Se NULL l'elemento è vuoto/ da
+1731 |   non visualizzare (instanziato solo come placeholder)
+1732 | - attr: gli attributi Raphael dell'elemento. NULL se path è NULL.
+1733 | - [center]: centro del path
+1734 | - [rect]: rettangolo che include il path
+1735 | 
+1736 | PATH:
+1737 | Un array in cui ogni elemento determina un passo del percorso per disegnare il grafico.
+1738 | E' una astrazione sul PATH SVG effettivo, e puo' avere alcuni valori speciali:
+1739 | [ [ 'TEXT',  testo, x, y ] ]
+1740 | [ [ 'CIRCLE', x, y, raggio ] ]
+1741 | [ [ 'RECT', x1, y1, x2, y2, rounded ] ] (x1,y1 dovrebbero essere sempre le coordinate in alto a sx)
+1742 | [ [ 'SLICE', x, y, raggio, raggio int, angolo1, angolo2 ] ] (gli angoli sono in gradi)
+1743 | [ [ 'RELEMENT', element ] ] (elemento Raphael gia' disegnato)
+1744 | [ [ 'DOMELEMENT', element ] ] (elemento DOM - in genere un DIV html - già disegnato)
+1745 | [ ... Path SVG ... ]
+1746 | 
+1747 | ------------------------------------------------------------------------
+1748 | 
+1749 | Z-INDEX:
+1750 | 0 : base
+1751 | 10 : tooltip
+1752 | 20 : interactive area (tutti gli elementi innescati dalla interactive area dovrebbero essere < 20)
+1753 | 25 : label / balloons (potrebbero essere resi cliccabili dall'esterno, quindi > 20)
+1754 | 
+1755 | ------------------------------------------------------------------------
+1756 | 
+1757 | USEFUL RESOURCES:
+1758 | 
+1759 | http://docs.jquery.com/Plugins/Authoring
+1760 | http://www.learningjquery.com/2007/10/a-plugin-development-pattern
+1761 | http://dean.edwards.name/packer/2/usage/#special-chars
+1762 | 
+1763 | http://raphaeljs.com/reference.html#attr
+1764 | 
+1765 | TODO
+1766 | * ottimizzare common.areaProps
+1767 | * rifare la posizione del tooltip del pie
+1768 | * ripristinare shadow
+1769 | 
+1770 | *********************************************/
+1771 | /********* Source File: src/elycharts_manager_anchor.js*********/
+1772 | /**********************************************************************
+1773 |  * ELYCHARTS
+1774 |  * A Javascript library to generate interactive charts with vectorial graphics.
+1775 |  *
+1776 |  * Copyright (c) 2010-2014 Void Labs s.n.c. (http://void.it)
+1777 |  * Licensed under the MIT (http://creativecommons.org/licenses/MIT/) license.
+1778 |  **********************************************************************/
+1779 | 
+1780 | (function($) {
+1781 | 
+1782 | var common = $.elycharts.common;
+1783 | 
+1784 | /***********************************************************************
+1785 |  * FEATURE: ANCHOR
+1786 |  * 
+1787 |  * Permette di collegare i dati del grafico con delle aree esterne, 
+1788 |  * identificate dal loro selettore CSS, e di interagire con esse.
+1789 |  **********************************************************************/
+1790 | 
+1791 | $.elycharts.anchormanager = {
+1792 |   
+1793 |   afterShow : function(env, pieces) {
+1794 |     // Prendo le aree gestite da mouseAreas, e metto i miei listener
+1795 |     // Non c'e' bisogno di gestire il clean per una chiamata successiva, lo fa gia' il mouseareamanager
+1796 |     // Tranne per i bind degli eventi jquery
+1797 | 
+1798 |     if (!env.opt.anchors)
+1799 |       return;
+1800 |       
+1801 |     if (!env.anchorBinds)
+1802 |       env.anchorBinds = [];
+1803 |     
+1804 |     while (env.anchorBinds.length) {
+1805 |       var b = env.anchorBinds.pop();
+1806 |       $(b[0]).unbind(b[1], b[2]);
+1807 |     }
+1808 |     
+1809 |     for (var i = 0; i < env.mouseAreas.length; i++) {
+1810 |       var serie = env.mouseAreas[i].piece ? env.mouseAreas[i].piece.serie : false;
+1811 |       var anc;
+1812 |       if (serie)
+1813 |         anc = env.opt.anchors[serie][env.mouseAreas[i].index];
+1814 |       else
+1815 |         anc = env.opt.anchors[env.mouseAreas[i].index];
+1816 |         
+1817 |       if (anc && env.mouseAreas[i].props.anchor && env.mouseAreas[i].props.anchor.highlight) {
+1818 |         
+1819 |         (function(env, mouseAreaData, anc, caller) {
+1820 |           
+1821 |           var f1 = function() { caller.anchorMouseOver(env, mouseAreaData); };
+1822 |           var f2 = function() { caller.anchorMouseOut(env, mouseAreaData); };
+1823 |           if (!env.mouseAreas[i].props.anchor.useMouseEnter) {
+1824 |             env.anchorBinds.push([anc, 'mouseover', f1]);
+1825 |             env.anchorBinds.push([anc, 'mouseout', f2]);
+1826 |             $(anc).mouseover(f1);
+1827 |             $(anc).mouseout(f2);
+1828 |           } else {
+1829 |             env.anchorBinds.push([anc, 'mouseenter', f1]);
+1830 |             env.anchorBinds.push([anc, 'mouseleave', f2]);
+1831 |             $(anc).mouseenter(f1);
+1832 |             $(anc).mouseleave(f2);
+1833 |           }
+1834 |         })(env, env.mouseAreas[i], anc, this);
+1835 |       }
+1836 |     }
+1837 |     
+1838 |     env.onAnchors = [];
+1839 |   },
+1840 |   
+1841 |   anchorMouseOver : function(env, mouseAreaData) {
+1842 |     $.elycharts.highlightmanager.onMouseOver(env, mouseAreaData.piece ? mouseAreaData.piece.serie : false, mouseAreaData.index, mouseAreaData);
+1843 |   },
+1844 |   
+1845 |   anchorMouseOut : function(env, mouseAreaData) {
+1846 |     $.elycharts.highlightmanager.onMouseOut(env, mouseAreaData.piece ? mouseAreaData.piece.serie : false, mouseAreaData.index, mouseAreaData);
+1847 |   },
+1848 |   
+1849 |   onMouseOver : function(env, serie, index, mouseAreaData) {
+1850 |     if (!env.opt.anchors)
+1851 |       return;
+1852 | 
+1853 |     if (mouseAreaData.props.anchor && mouseAreaData.props.anchor.addClass) {
+1854 |       //var serie = mouseAreaData.piece ? mouseAreaData.piece.serie : false;
+1855 |       var anc;
+1856 |       if (serie)
+1857 |         anc = env.opt.anchors[serie][mouseAreaData.index];
+1858 |       else
+1859 |         anc = env.opt.anchors[mouseAreaData.index];
+1860 |       if (anc) {
+1861 |         $(anc).addClass(mouseAreaData.props.anchor.addClass);
+1862 |         env.onAnchors.push([anc, mouseAreaData.props.anchor.addClass]);
+1863 |       }
+1864 |     }
+1865 |   },
+1866 |   
+1867 |   onMouseOut : function(env, serie, index, mouseAreaData) {
+1868 |     if (!env.opt.anchors)
+1869 |       return;
+1870 |     
+1871 |     while (env.onAnchors.length > 0) {
+1872 |       var o = env.onAnchors.pop();
+1873 |       $(o[0]).removeClass(o[1]);
+1874 |     }
+1875 |   }
+1876 | }
+1877 | 
+1878 | $.elycharts.featuresmanager.register($.elycharts.anchormanager, 30);
+1879 | 
+1880 | })(jQuery);
+1881 | /********* Source File: src/elycharts_manager_animation.js*********/
+1882 | /**********************************************************************
+1883 |  * ELYCHARTS
+1884 |  * A Javascript library to generate interactive charts with vectorial graphics.
+1885 |  *
+1886 |  * Copyright (c) 2010-2014 Void Labs s.n.c. (http://void.it)
+1887 |  * Licensed under the MIT (http://creativecommons.org/licenses/MIT/) license.
+1888 |  **********************************************************************/
+1889 | 
+1890 | (function($) {
+1891 | 
+1892 | var common = $.elycharts.common;
+1893 | 
+1894 | /***********************************************************************
+1895 |  * ANIMATIONMANAGER
+1896 |  **********************************************************************/
+1897 | 
+1898 | $.elycharts.animationmanager = {
+1899 |   
+1900 |   beforeShow : function(env, pieces) {
+1901 |     if (!env.newopt)
+1902 |       this.startAnimation(env, pieces);
+1903 |     else
+1904 |       this.stepAnimation(env, pieces);
+1905 |   },
+1906 |   
+1907 |   stepAnimation : function(env, pieces) {
+1908 |     pieces = this._stepAnimationInt(env, pieces);
+1909 |   },
+1910 |   
+1911 |   _stepAnimationInt : function(env, pieces, section, serie, internal) {
+1912 |     for (var i = 0; i < pieces.length; i++) {
+1913 |       var animationProps = common.areaProps(env, section ? section : pieces[i].section, serie ? serie : pieces[i].serie);
+1914 |       if (animationProps && animationProps.stepAnimation)
+1915 |         animationProps = animationProps.stepAnimation;
+1916 |       else
+1917 |         animationProps = env.opt.features.animation.stepAnimation;
+1918 |       
+1919 |       if (typeof pieces[i].paths == 'undefined') {
+1920 |         if (animationProps && animationProps.active && pieces[i].animation) {
+1921 |           pieces[i].animation.speed = animationProps && animationProps.speed ? animationProps.speed : 300;
+1922 |           pieces[i].animation.easing = animationProps && animationProps.easing ? animationProps.easing : '';
+1923 |           pieces[i].animation.delay = animationProps && animationProps.delay ? animationProps.delay : 0;
+1924 |           if (!pieces[i].animation.element)
+1925 |             pieces[i].animation.startAttr = {opacity : 0};
+1926 |         }
+1927 |       } else {
+1928 |         this._stepAnimationInt(env, pieces[i].paths, pieces[i].section, pieces[i].serie, true);
+1929 |       }
+1930 |     }
+1931 |   },
+1932 |   
+1933 |   startAnimation : function(env, pieces) {
+1934 |     for (var i = 0; i < pieces.length; i++)
+1935 |       if (pieces[i].paths || pieces[i].path) {
+1936 |         var props = common.areaProps(env, pieces[i].section, pieces[i].serie);
+1937 |         if (props && props.startAnimation)
+1938 |           props = props.startAnimation;
+1939 |         else
+1940 |           props = env.opt.features.animation.startAnimation;
+1941 |         
+1942 |         if (props && props.active) {
+1943 |           if (props.type == 'simple' || pieces[i].section != 'Series')
+1944 |             this.animationSimple(env, props, pieces[i]);
+1945 |           if (props.type == 'grow')
+1946 |             this.animationGrow(env, props, pieces[i]);
+1947 |           if (props.type == 'avg')
+1948 |             this.animationAvg(env, props, pieces[i]);
+1949 |           if (props.type == 'reg')
+1950 |             this.animationReg(env, props, pieces[i]);
+1951 |         }
+1952 |       }
+1953 |   },
+1954 |   
+1955 |   /**
+1956 |    * Inserisce i dati base di animazione del piece e la transizione di attributi
+1957 |    */
+1958 |   _animationPiece : function(piece, animationProps, subSection) {
+1959 |     if (piece.paths) {
+1960 |       for (var i = 0; i < piece.paths.length; i++)
+1961 |         this._animationPiece(piece.paths[i], animationProps, subSection);
+1962 |     } else if (piece.path) {
+1963 |       piece.animation = {
+1964 |         speed : animationProps.speed,
+1965 |         easing : animationProps.easing,
+1966 |         delay : animationProps.delay,
+1967 |         startPath : [],
+1968 |         startAttr : common._clone(piece.attr)
+1969 |       };
+1970 |       if (animationProps.propsTo)
+1971 |         piece.attr = $.extend(true, piece.attr, animationProps.propsTo);
+1972 |       if (animationProps.propsFrom)
+1973 |         piece.animation.startAttr = $.extend(true, piece.animation.startAttr, animationProps.propsFrom);
+1974 |       if (subSection && animationProps[subSection.toLowerCase() + 'PropsFrom'])
+1975 |         piece.animation.startAttr = $.extend(true, piece.animation.startAttr, animationProps[subSection.toLowerCase() + 'PropsFrom']);
+1976 |       
+1977 |       if (typeof piece.animation.startAttr.opacity != 'undefined' && typeof piece.attr.opacity == 'undefined')
+1978 |         piece.attr.opacity = 1;
+1979 |     }
+1980 |   },
+1981 |   
+1982 |   animationSimple : function(env, props, piece) {
+1983 |     this._animationPiece(piece, props, piece.subSection);
+1984 |   },
+1985 |   
+1986 |   animationGrow : function(env, props, piece) {
+1987 |     this._animationPiece(piece, props, piece.subSection);
+1988 |     var i, npath, y;
+1989 |     
+1990 |     switch (env.opt.type) {
+1991 |       case 'line':
+1992 |         y = env.height - env.opt.margins[2];
+1993 |         switch (piece.subSection) {
+1994 |           case 'Plot':
+1995 |             if (!piece.paths) {
+1996 |                 npath = [ 'LINE', [], piece.path[0][2]];
+1997 |                 for (i = 0; i < piece.path[0][1].length; i++)
+1998 |                   npath[1].push([ piece.path[0][1][i][0], piece.path[0][1][i][1] == null ? null : y ]);
+1999 |                 piece.animation.startPath.push(npath);
+2000 | 
+2001 |             } else {
+2002 |               for (i = 0; i < piece.paths.length; i++)
+2003 |                 if (piece.paths[i].path)
+2004 |                   piece.paths[i].animation.startPath.push([ 'RECT', piece.paths[i].path[0][1], y, piece.paths[i].path[0][3], y ]);
+2005 |             }
+2006 |             break;
+2007 |           case 'Fill':
+2008 |             npath = [ 'LINEAREA', [], [], piece.path[0][3]];
+2009 |             for (i = 0; i < piece.path[0][1].length; i++) {
+2010 |               npath[1].push([ piece.path[0][1][i][0], piece.path[0][1][i][1] == null ? null : y ]);
+2011 |               npath[2].push([ piece.path[0][2][i][0], piece.path[0][2][i][1] == null ? null : y ]);
+2012 |             }
+2013 |             piece.animation.startPath.push(npath);
+2014 |             
+2015 |             break;
+2016 |           case 'Dot':
+2017 |             for (i = 0; i < piece.paths.length; i++)
+2018 |               if (piece.paths[i].path)
+2019 |                 piece.paths[i].animation.startPath.push(['CIRCLE', piece.paths[i].path[0][1], y, piece.paths[i].path[0][3]]);
+2020 |             break;
+2021 |         }
+2022 |         break;
+2023 |         
+2024 |       case 'pie':
+2025 |         if (piece.subSection == 'Plot')
+2026 |           for (i = 0; i < piece.paths.length; i++)
+2027 |             if (piece.paths[i].path && piece.paths[i].path[0][0] == 'SLICE')
+2028 |               piece.paths[i].animation.startPath.push([ 'SLICE', piece.paths[i].path[0][1], piece.paths[i].path[0][2], piece.paths[i].path[0][4] + piece.paths[i].path[0][3] * 0.1, piece.paths[i].path[0][4], piece.paths[i].path[0][5], piece.paths[i].path[0][6] ]);
+2029 |             
+2030 |         break;
+2031 |       
+2032 |       case 'funnel':
+2033 |         alert('Unsupported animation GROW for funnel');
+2034 |         break;
+2035 | 
+2036 |       case 'barline':
+2037 |         var x;
+2038 |         if (piece.section == 'Series' && piece.subSection == 'Plot') {
+2039 |           if (!props.subType)
+2040 |             x = env.opt.direction != 'rtl' ? env.opt.margins[3] : env.width - env.opt.margins[1];
+2041 |           else if (props.subType == 1)
+2042 |             x = env.opt.direction != 'rtl' ? env.width - env.opt.margins[1] : env.opt.margins[3];
+2043 |           for (i = 0; i < piece.paths.length; i++)
+2044 |             if (piece.paths[i].path) {
+2045 |               if (!props.subType || props.subType == 1)
+2046 |                 piece.paths[i].animation.startPath.push([ 'RECT', x, piece.paths[i].path[0][2], x, piece.paths[i].path[0][4], piece.paths[i].path[0][5] ]);
+2047 |               else {
+2048 |                 y = (piece.paths[i].path[0][2] + piece.paths[i].path[0][4]) / 2;
+2049 |                 piece.paths[i].animation.startPath.push([ 'RECT', piece.paths[i].path[0][1], y, piece.paths[i].path[0][3], y, piece.paths[i].path[0][5] ]);
+2050 |               }
+2051 |             }
+2052 |         }
+2053 |         
+2054 |         break;
+2055 |     }
+2056 |   },
+2057 | 
+2058 |   _animationAvgXYArray : function(arr) {
+2059 |     var res = [], avg = 0, i;
+2060 |     var count = 0;
+2061 |     for (i = 0; i < arr.length; i++) if (arr[i][1] != null) {
+2062 |       avg += arr[i][1];
+2063 |       count++;
+2064 |     }
+2065 |     avg = avg / count;
+2066 |     for (i = 0; i < arr.length; i++)
+2067 |       res.push([ arr[i][0], arr[i][1] == null ? null : avg ]);
+2068 |     return res;
+2069 |   },
+2070 | 
+2071 |   animationAvg : function(env, props, piece) {
+2072 |     this._animationPiece(piece, props, piece.subSection);
+2073 |     
+2074 |     var avg = 0, i, l;
+2075 |     switch (env.opt.type) {
+2076 |       case 'line':
+2077 |         switch (piece.subSection) {
+2078 |           case 'Plot':
+2079 |             if (!piece.paths) {
+2080 |               // LINE
+2081 |               piece.animation.startPath.push([ 'LINE', this._animationAvgXYArray(piece.path[0][1]), piece.path[0][2] ]);
+2082 | 
+2083 |             } else {
+2084 |               // BAR
+2085 |               l = 0;
+2086 |               for (i = 0; i < piece.paths.length; i++)
+2087 |                 if (piece.paths[i].path) {
+2088 |                   l ++;
+2089 |                   avg += piece.paths[i].path[0][2];
+2090 |                 }
+2091 |               avg = avg / l;
+2092 |               for (i = 0; i < piece.paths.length; i++)
+2093 |                 if (piece.paths[i].path)
+2094 |                   piece.paths[i].animation.startPath.push([ "RECT", piece.paths[i].path[0][1], avg, piece.paths[i].path[0][3], piece.paths[i].path[0][4] ]);
+2095 |             }
+2096 |             break;
+2097 | 
+2098 |           case 'Fill':
+2099 |             piece.animation.startPath.push([ 'LINEAREA', this._animationAvgXYArray(piece.path[0][1]), this._animationAvgXYArray(piece.path[0][2]), piece.path[0][3] ]);
+2100 |             
+2101 |             break;
+2102 | 
+2103 |           case 'Dot':
+2104 |             l = 0;
+2105 |             for (i = 0; i < piece.paths.length; i++)
+2106 |               if (piece.paths[i].path) {
+2107 |                 l ++;
+2108 |                 avg += piece.paths[i].path[0][2];
+2109 |               }
+2110 |             avg = avg / l;
+2111 |             for (i = 0; i < piece.paths.length; i++)
+2112 |               if (piece.paths[i].path)
+2113 |                 piece.paths[i].animation.startPath.push(['CIRCLE', piece.paths[i].path[0][1], avg, piece.paths[i].path[0][3]]);
+2114 |             break;
+2115 |         }
+2116 |         break;
+2117 | 
+2118 |       case 'pie':
+2119 |         var delta = 360 / piece.paths.length;
+2120 |       
+2121 |         if (piece.subSection == 'Plot')
+2122 |           for (i = 0; i < piece.paths.length; i++)
+2123 |             if (piece.paths[i].path && piece.paths[i].path[0][0] == 'SLICE')
+2124 |               piece.paths[i].animation.startPath.push([ 'SLICE', piece.paths[i].path[0][1], piece.paths[i].path[0][2], piece.paths[i].path[0][3], piece.paths[i].path[0][4], i * delta, (i + 1) * delta ]);
+2125 |         
+2126 |         break;
+2127 |         
+2128 |       case 'funnel':
+2129 |         alert('Unsupported animation AVG for funnel');
+2130 |         break;
+2131 | 
+2132 |       case 'barline':
+2133 |         alert('Unsupported animation AVG for barline');
+2134 |         break;
+2135 |     }
+2136 |   },
+2137 | 
+2138 |   _animationRegXYArray : function(arr) {
+2139 |     var res = [];
+2140 |     var c = arr.length;
+2141 |     
+2142 |     var start = 0;
+2143 |     var end = c - 1;
+2144 |     
+2145 |     while (arr[start][1] == null) start++;
+2146 |     while (arr[end][1] == null) end--;
+2147 |     
+2148 |     var y1 = arr[0][1];
+2149 |     var y2 = arr[c - 1][1];
+2150 |     
+2151 |     for (var i = 0; i < arr.length; i++) {
+2152 |       if (arr[i][1] == null) res.push([ arr[i][0], null ]);
+2153 |       else {
+2154 |         res.push([ arr[i][0], arr[start][1] + (arr[end][1] - arr[start][1]) / (end - start) * ( i - start) ]);
+2155 |       }
+2156 |     }
+2157 |     
+2158 |     return res;
+2159 |   },
+2160 | 
+2161 |   animationReg : function(env, props, piece) {
+2162 |     this._animationPiece(piece, props, piece.subSection);
+2163 |     var i, c, y1, y2;
+2164 |     
+2165 |     switch (env.opt.type) {
+2166 |       case 'line':
+2167 |         switch (piece.subSection) {
+2168 |           case 'Plot':
+2169 |             if (!piece.paths) {
+2170 |               // LINE
+2171 |               piece.animation.startPath.push([ 'LINE', this._animationRegXYArray(piece.path[0][1]), piece.path[0][2] ]);
+2172 |               
+2173 |             } else {
+2174 |               // BAR
+2175 |               c = piece.paths.length;
+2176 |               if (c > 1) {
+2177 |                 for (i = 0; !piece.paths[i].path && i < piece.paths.length; i++) {}
+2178 |                 y1 = piece.paths[i].path ? common.getY(piece.paths[i].path[0]) : 0;
+2179 |                 for (i = piece.paths.length - 1; !piece.paths[i].path && i >= 0; i--) {}
+2180 |                 y2 = piece.paths[i].path ? common.getY(piece.paths[i].path[0]) : 0;
+2181 | 
+2182 |                 for (i = 0; i < piece.paths.length; i++)
+2183 |                   if (piece.paths[i].path)
+2184 |                     piece.paths[i].animation.startPath.push([ "RECT", piece.paths[i].path[0][1], y1 + (y2 - y1) / (c - 1) * i, piece.paths[i].path[0][3], piece.paths[i].path[0][4] ]);
+2185 |               }
+2186 |             }
+2187 |             break;
+2188 | 
+2189 |           case 'Fill':
+2190 |             piece.animation.startPath.push([ 'LINEAREA', this._animationRegXYArray(piece.path[0][1]), this._animationRegXYArray(piece.path[0][2]), piece.path[0][3] ]);
+2191 |             break;
+2192 | 
+2193 |           case 'Dot':
+2194 |             c = piece.paths.length;
+2195 |             if (c > 1) {
+2196 |               for (i = 0; !piece.paths[i].path && i < piece.paths.length; i++) {}
+2197 |               y1 = piece.paths[i].path ? common.getY(piece.paths[i].path[0]) : 0;
+2198 |               for (i = piece.paths.length - 1; !piece.paths[i].path && i >= 0; i--) {}
+2199 |               y2 = piece.paths[i].path ? common.getY(piece.paths[i].path[0]) : 0;
+2200 | 
+2201 |               for (i = 0; i < piece.paths.length; i++)
+2202 |                 if (piece.paths[i].path)
+2203 |                   piece.paths[i].animation.startPath.push(['CIRCLE', piece.paths[i].path[0][1], y1 + (y2 - y1) / (c - 1) * i, piece.paths[i].path[0][3]]);
+2204 |             }
+2205 |             break;
+2206 |         }
+2207 |         break;
+2208 | 
+2209 |       case 'pie':
+2210 |         alert('Unsupported animation REG for pie');
+2211 |         break;
+2212 |         
+2213 |       case 'funnel':
+2214 |         alert('Unsupported animation REG for funnel');
+2215 |         break;
+2216 | 
+2217 |       case 'barline':
+2218 |         alert('Unsupported animation REG for barline');
+2219 |         break;
+2220 |     }
+2221 |   }
+2222 | }
+2223 | 
+2224 | $.elycharts.featuresmanager.register($.elycharts.animationmanager, 10);
+2225 | 
+2226 | /***********************************************************************
+2227 |  * FRAMEANIMATIONMANAGER
+2228 |  **********************************************************************/
+2229 | 
+2230 | $.elycharts.frameanimationmanager = {
+2231 |   
+2232 |   beforeShow : function(env, pieces) {
+2233 |     if (env.opt.features.frameAnimation.active)
+2234 |       $(env.container.get(0)).css(env.opt.features.frameAnimation.cssFrom);
+2235 |   },
+2236 | 
+2237 |   afterShow : function(env, pieces) {
+2238 |     if (env.opt.features.frameAnimation.active)
+2239 |       env.container.animate(env.opt.features.frameAnimation.cssTo, env.opt.features.frameAnimation.speed, env.opt.features.frameAnimation.easing);
+2240 |   }
+2241 | };
+2242 | 
+2243 | $.elycharts.featuresmanager.register($.elycharts.frameanimationmanager, 90);
+2244 | 
+2245 | })(jQuery);
+2246 | /********* Source File: src/elycharts_manager_highlight.js*********/
+2247 | /**********************************************************************
+2248 |  * ELYCHARTS
+2249 |  * A Javascript library to generate interactive charts with vectorial graphics.
+2250 |  *
+2251 |  * Copyright (c) 2010-2014 Void Labs s.n.c. (http://void.it)
+2252 |  * Licensed under the MIT (http://creativecommons.org/licenses/MIT/) license.
+2253 |  **********************************************************************/
+2254 | 
+2255 | (function($) {
+2256 | 
+2257 | var common = $.elycharts.common;
+2258 | 
+2259 | /***********************************************************************
+2260 |  * FEATURE: HIGHLIGHT
+2261 |  *
+2262 |  * Permette di evidenziare in vari modi l'area in cui si passa con il
+2263 |  * mouse.
+2264 |  **********************************************************************/
+2265 | 
+2266 | $.elycharts.highlightmanager = {
+2267 | 
+2268 |   removeHighlighted : function(env, full) {
+2269 |     if (env.highlighted)
+2270 |       while (env.highlighted.length > 0) {
+2271 |         var o = env.highlighted.pop();
+2272 |         if (o.piece) {
+2273 |           if (full)
+2274 |             common.animationStackPush(env, o.piece, o.piece.element, common.getPieceFullAttr(env, o.piece), o.cfg.restoreSpeed, o.cfg.restoreEasing, 0, true);
+2275 |         } else
+2276 |           o.element.remove();
+2277 |       }
+2278 |   },
+2279 | 
+2280 |   afterShow : function(env, pieces) {
+2281 |     if (env.highlighted && env.highlighted.length > 0)
+2282 |       this.removeHighlighted(env, false);
+2283 |     env.highlighted = [];
+2284 |   },
+2285 | 
+2286 |   onMouseOver : function(env, serie, index, mouseAreaData) {
+2287 |     var path, element;
+2288 |     // TODO Se non e' attivo l'overlay (per la serie o per tutto) e' inutile fare il resto
+2289 | 
+2290 |     // Cerco i piece da evidenziare (tutti quelli che sono costituiti da path multipli)
+2291 |     for (var i = 0; i < mouseAreaData.pieces.length; i++)
+2292 | 
+2293 |       // Il loop sotto estrae solo i pieces con array di path (quindi non i line o i fill del linechart ... ma il resto si)
+2294 |       if (mouseAreaData.pieces[i].section == 'Series' && mouseAreaData.pieces[i].paths
+2295 |         && (!serie || mouseAreaData.pieces[i].serie == serie)
+2296 |         && mouseAreaData.pieces[i].paths[index] && mouseAreaData.pieces[i].paths[index].element) {
+2297 |         var piece = mouseAreaData.pieces[i].paths[index];
+2298 |         element = piece.element;
+2299 |         path = piece.path;
+2300 |         var attr = common.getElementOriginalAttrs(element);
+2301 |         var newattr = false; // In caso la geometria dell'oggetto è modificata mediante attr (es: per circle) qui memorizza i nuovi attributi
+2302 |         var props = serie ? mouseAreaData.props : common.areaProps(env, mouseAreaData.pieces[i].section, mouseAreaData.pieces[i].serie);
+2303 |         var pelement, ppiece, ppath;
+2304 |         if (path && props.highlight) {
+2305 |           if (props.highlight.scale) {
+2306 |             var scale = props.highlight.scale;
+2307 |             if (typeof scale == 'number')
+2308 |               scale = [scale, scale];
+2309 | 
+2310 |             if (path[0][0] == 'RECT') {
+2311 |               var w = path[0][3] - path[0][1];
+2312 |               var h = path[0][4] - path[0][2];
+2313 |               path = [ [ 'RECT', path[0][1], path[0][2] - h * (scale[1] - 1), path[0][3] + w * (scale[0] - 1), path[0][4] ] ];
+2314 |               common.animationStackPush(env, piece, element, common.getSVGProps(env, path), props.highlight.scaleSpeed, props.highlight.scaleEasing);
+2315 |             }
+2316 |             else if (path[0][0] == 'CIRCLE') {
+2317 |               // I pass directly new radius
+2318 |               newattr = {r : path[0][3] * scale[0]};
+2319 |               common.animationStackPush(env, piece, element, newattr, props.highlight.scaleSpeed, props.highlight.scaleEasing);
+2320 |             }
+2321 |             else if (path[0][0] == 'SLICE') {
+2322 |               // Per lo slice x e' il raggio, y e' l'angolo
+2323 |               var d = (path[0][6] - path[0][5]) * (scale[1] - 1) / 2;
+2324 |               if (d > 90)
+2325 |                 d = 90;
+2326 |               path = [ [ 'SLICE', path[0][1], path[0][2], path[0][3] * scale[0], path[0][4], path[0][5] - d, path[0][6] + d ] ];
+2327 |               common.animationStackPush(env, piece, element, common.getSVGProps(env, path), props.highlight.scaleSpeed, props.highlight.scaleEasing);
+2328 | 
+2329 |             } else if (env.opt.type == 'funnel') {
+2330 |               var dx = (piece.rect[2] - piece.rect[0]) * (scale[0] - 1) / 2;
+2331 |               var dy = (piece.rect[3] - piece.rect[1]) * (scale[1] - 1) / 2;
+2332 | 
+2333 |               // Specifico di un settore del funnel
+2334 |               // SHOULD ALREADY BE DONE BY core common.animationStackStart(env);
+2335 |               path = [ common.movePath(env, [ path[0]], [-dx, -dy])[0],
+2336 |                 common.movePath(env, [ path[1]], [+dx, -dy])[0],
+2337 |                 common.movePath(env, [ path[2]], [+dx, +dy])[0],
+2338 |                 common.movePath(env, [ path[3]], [-dx, +dy])[0],
+2339 |                 path[4] ];
+2340 |               common.animationStackPush(env, piece, element, common.getSVGProps(env, path), props.highlight.scaleSpeed, props.highlight.scaleEasing, 0, true);
+2341 | 
+2342 |               // Se c'e' un piece precedente lo usa, altrimenti cerca un topSector per la riduzione
+2343 |               pelement = false;
+2344 |               if (index > 0) {
+2345 |                 ppiece = mouseAreaData.pieces[i].paths[index - 1];
+2346 |                 pelement = ppiece.element;
+2347 |                 ppath = ppiece.path;
+2348 |               } else {
+2349 |                 ppiece = common.findInPieces(mouseAreaData.pieces, 'Sector', 'top');
+2350 |                 if (ppiece) {
+2351 |                   pelement = ppiece.element;
+2352 |                   ppath = ppiece.path;
+2353 |                 }
+2354 |               }
+2355 |               if (pelement) {
+2356 |                 //pattr = common.getElementOriginalAttrs(pelement);
+2357 |                 ppath = [
+2358 |                   ppath[0], ppath[1],
+2359 |                   common.movePath(env, [ ppath[2]], [+dx, -dy])[0],
+2360 |                   common.movePath(env, [ ppath[3]], [-dx, -dy])[0],
+2361 |                   ppath[4] ];
+2362 |                 common.animationStackPush(env, ppiece, pelement, common.getSVGProps(env, ppath), props.highlight.scaleSpeed, props.highlight.scaleEasing, 0, true);
+2363 |                 env.highlighted.push({piece : ppiece, cfg : props.highlight});
+2364 |               }
+2365 | 
+2366 |               // Se c'e' un piece successivo lo usa, altrimenti cerca un bottomSector per la riduzione
+2367 |               pelement = false;
+2368 |               if (index < mouseAreaData.pieces[i].paths.length - 1) {
+2369 |                 ppiece = mouseAreaData.pieces[i].paths[index + 1];
+2370 |                 pelement = ppiece.element;
+2371 |                 ppath = ppiece.path;
+2372 |               } else {
+2373 |                 ppiece = common.findInPieces(mouseAreaData.pieces, 'Sector', 'bottom');
+2374 |                 if (ppiece) {
+2375 |                   pelement = ppiece.element;
+2376 |                   ppath = ppiece.path;
+2377 |                 }
+2378 |               }
+2379 |               if (pelement) {
+2380 |                 //var pattr = common.getElementOriginalAttrs(pelement);
+2381 |                 ppath = [
+2382 |                   common.movePath(env, [ ppath[0]], [-dx, +dy])[0],
+2383 |                   common.movePath(env, [ ppath[1]], [+dx, +dy])[0],
+2384 |                   ppath[2], ppath[3],
+2385 |                   ppath[4] ];
+2386 |                 common.animationStackPush(env, ppiece, pelement, common.getSVGProps(env, ppath), props.highlight.scaleSpeed, props.highlight.scaleEasing, 0, true);
+2387 |                 env.highlighted.push({piece : ppiece, cfg : props.highlight});
+2388 |               }
+2389 |               // SHOULD ALREADY BE DONE BY core: common.animationStackEnd(env);
+2390 |             }
+2391 |             /* Con scale non va bene
+2392 |             if (!attr.scale)
+2393 |               attr.scale = [1, 1];
+2394 |             element.attr({scale : [scale[0], scale[1]]}); */
+2395 |           }
+2396 |           if (props.highlight.newProps) {
+2397 |             for (var a in props.highlight.newProps)
+2398 |               if (typeof attr[a] == 'undefined')
+2399 |                 attr[a] = false;
+2400 |             common.animationStackPush(env, piece, element, props.highlight.newProps);
+2401 |           }
+2402 |           if (props.highlight.move) {
+2403 |             var offset = $.isArray(props.highlight.move) ? props.highlight.move : [props.highlight.move, 0];
+2404 |             path = common.movePath(env, path, offset);
+2405 |             common.animationStackPush(env, piece, element, common.getSVGProps(env, path), props.highlight.moveSpeed, props.highlight.moveEasing);
+2406 |           }
+2407 | 
+2408 |           //env.highlighted.push({element : element, attr : attr});
+2409 |           env.highlighted.push({piece : piece, cfg : props.highlight});
+2410 | 
+2411 |           if (props.highlight.overlayProps) {
+2412 |             // NOTA: path e' il path modificato dai precedenti (cosi' l'overlay tiene conto della cosa), deve guardare anche a newattr
+2413 |             //BIND: mouseAreaData.listenerDisabled = true;
+2414 |             element = common.showPath(env, path);
+2415 |             if (newattr)
+2416 |               element.attr(newattr);
+2417 |             element.attr(props.highlight.overlayProps);
+2418 |             //BIND: $(element.node).unbind().mouseover(mouseAreaData.mouseover).mouseout(mouseAreaData.mouseout);
+2419 |             // Se metto immediatamente il mouseAreaData.listenerDisabled poi va comunque un mouseout dalla vecchia area e va
+2420 |             // in loop. TODO Rivedere e sistemare anche per tooltip
+2421 |             //BIND: setTimeout(function() { mouseAreaData.listenerDisabled = false; }, 10);
+2422 |             attr = false;
+2423 |             env.highlighted.push({element : element, attr : attr, cfg : props.highlight});
+2424 |           }
+2425 |         }
+2426 |       }
+2427 | 
+2428 |     if (env.opt.features.highlight.indexHighlight && env.opt.type == 'line') {
+2429 |       var t = env.opt.features.highlight.indexHighlight;
+2430 |       if (t == 'auto')
+2431 |         t = (env.indexCenter == 'bar' ? 'bar' : 'line');
+2432 | 
+2433 |       var delta1 = (env.width - env.opt.margins[3] - env.opt.margins[1]) / (env.opt.labels.length > 0 ? env.opt.labels.length : 1);
+2434 |       var delta2 = (env.width - env.opt.margins[3] - env.opt.margins[1]) / (env.opt.labels.length > 1 ? env.opt.labels.length - 1 : 1);
+2435 |       var lineCenter = true;
+2436 | 
+2437 |       switch (t) {
+2438 |         case 'bar':
+2439 |           path = [ ['RECT', env.opt.margins[3] + index * delta1, env.opt.margins[0] ,
+2440 |             env.opt.margins[3] + (index + 1) * delta1, env.height - env.opt.margins[2] ] ];
+2441 |           break;
+2442 | 
+2443 |         case 'line':
+2444 |           lineCenter = false;
+2445 |         case 'barline':
+2446 |           var x = Math.round((lineCenter ? delta1 / 2 : 0) + env.opt.margins[3] + index * (lineCenter ? delta1 : delta2));
+2447 |           path = [[ 'M', x, env.opt.margins[0]], ['L', x, env.height - env.opt.margins[2]]];
+2448 |       }
+2449 |       if (path) {
+2450 |         //BIND: mouseAreaData.listenerDisabled = true;
+2451 |         element = common.showPath(env, path).attr(env.opt.features.highlight.indexHighlightProps);
+2452 |         //BIND: $(element.node).unbind().mouseover(mouseAreaData.mouseover).mouseout(mouseAreaData.mouseout);
+2453 |         //BIND: setTimeout(function() { mouseAreaData.listenerDisabled = false; }, 10);
+2454 |         env.highlighted.push({element : element, attr : false, cfg : env.opt.features.highlight});
+2455 |       }
+2456 |     }
+2457 |   },
+2458 | 
+2459 |   onMouseOut : function(env, serie, index, mouseAreaData) {
+2460 |     this.removeHighlighted(env, true);
+2461 |   }
+2462 | 
+2463 | };
+2464 | 
+2465 | $.elycharts.featuresmanager.register($.elycharts.highlightmanager, 21);
+2466 | 
+2467 | })(jQuery);
+2468 | /********* Source File: src/elycharts_manager_label.js*********/
+2469 | /**********************************************************************
+2470 |  * ELYCHARTS
+2471 |  * A Javascript library to generate interactive charts with vectorial graphics.
+2472 |  *
+2473 |  * Copyright (c) 2010-2014 Void Labs s.n.c. (http://void.it)
+2474 |  * Licensed under the MIT (http://creativecommons.org/licenses/MIT/) license.
+2475 |  **********************************************************************/
+2476 | 
+2477 | (function($) {
+2478 | 
+2479 | var common = $.elycharts.common;
+2480 | 
+2481 | /***********************************************************************
+2482 |  * FEATURE: LABELS
+2483 |  * 
+2484 |  * Permette di visualizzare in vari modi le label del grafico.
+2485 |  * In particolare per pie e funnel permette la visualizzazione all'interno
+2486 |  * delle fette.
+2487 |  * Per i line chart le label sono visualizzate già nella gestione assi.
+2488 |  * 
+2489 |  * TODO:
+2490 |  * - Comunque per i line chart si potrebbe gestire la visualizzazione
+2491 |  *   all'interno delle barre, o sopra i punti.
+2492 |  **********************************************************************/
+2493 | 
+2494 | $.elycharts.labelmanager = {
+2495 | 
+2496 |   beforeShow : function(env, pieces) {
+2497 |     
+2498 |     if (!common.executeIfChanged(env, ['labels', 'values', 'series']))
+2499 |       return;
+2500 |     
+2501 |     if (env.opt.labels && (env.opt.type == 'pie' || env.opt.type == 'funnel')) {
+2502 |       var /*lastSerie = false, */lastIndex = false;
+2503 |       var paths;
+2504 |       
+2505 |       for (var i = 0; i < pieces.length; i++) {
+2506 |         if (pieces[i].section == 'Series' && pieces[i].subSection == 'Plot') {
+2507 |           var props = common.areaProps(env, 'Series', pieces[i].serie);
+2508 |           if (env.emptySeries && env.opt.series.empty)
+2509 |             props.label = $.extend(true, props.label, env.opt.series.empty.label);
+2510 |           if (props && props.label && props.label.active) {
+2511 |             paths = [];
+2512 |             for (var index = 0; index < pieces[i].paths.length; index++) 
+2513 |               if (pieces[i].paths[index].path) {
+2514 |                 //lastSerie = pieces[i].serie;
+2515 |                 lastIndex = index;
+2516 |                 paths.push(this.showLabel(env, pieces[i], pieces[i].paths[index], pieces[i].serie, index, pieces));
+2517 |               } else
+2518 |                 paths.push({ path : false, attr : false });
+2519 |             pieces.push({ section : pieces[i].section, serie : pieces[i].serie, subSection : 'Label', paths: paths });
+2520 |           }
+2521 |         }
+2522 |         else if (pieces[i].section == 'Sector' && pieces[i].serie == 'bottom' && !pieces[i].subSection && lastIndex < env.opt.labels.length - 1) {
+2523 |           paths = [];
+2524 |           paths.push(this.showLabel(env, pieces[i], pieces[i], 'Series', env.opt.labels.length - 1, pieces));
+2525 |           pieces.push({ section : pieces[i].section, serie : pieces[i].serie, subSection : 'Label', paths: paths });
+2526 |         }
+2527 |       }
+2528 |       
+2529 |     }
+2530 |   },
+2531 |   
+2532 |   showLabel : function(env, piece, path, serie, index, pieces) {
+2533 |     var pp = common.areaProps(env, 'Series', serie, index);
+2534 |     if (env.opt.labels[index] || pp.label.label) {
+2535 |       var p = path;
+2536 |       var label = pp.label.label ? pp.label.label : env.opt.labels[index];
+2537 |       var center = common.getCenter(p, pp.label.offset);
+2538 |       if (!pp.label.html) {
+2539 |         var attr = pp.label.props;
+2540 |         if (pp.label.frameAnchor) {
+2541 |           attr = common._clone(pp.label.props);
+2542 |           attr['text-anchor'] = pp.label.frameAnchor[0];
+2543 |           attr['alignment-baseline'] = pp.label.frameAnchor[1];
+2544 |         }
+2545 |         /*pieces.push({
+2546 |           path : [ [ 'TEXT', label, center[0], center[1] ] ], attr : attr, 
+2547 |           section: 'Series', serie : serie, index : index, subSection : 'Label'
+2548 |         });*/
+2549 |         return { path : [ [ 'TEXT', label, center[0], center[1] ] ], attr : attr };
+2550 | 
+2551 |       } else {
+2552 |         var opacity = 1;
+2553 |         var style = common._clone(pp.label.style);
+2554 |         var set_opacity = (typeof style.opacity != 'undefined')
+2555 |         if (set_opacity) {
+2556 |           opacity = style.opacity;
+2557 |           style.opacity = 0;
+2558 |         }
+2559 |         style.position = 'absolute';
+2560 |         style['z-index'] = 25;
+2561 | 
+2562 |         var el;
+2563 |         if (typeof label == 'string')
+2564 |           el = $('<div>' + label + '</div>').css(style).prependTo(env.container);
+2565 |         else
+2566 |           el = $(label).css(style).prependTo(env.container);
+2567 |           
+2568 |         // Centramento corretto label
+2569 |         if (env.opt.features.debug.active && el.height() == 0)
+2570 |           alert('DEBUG: Al gestore label e\' stata passata una label ancora senza dimensioni, quindi ancora non disegnata. Per questo motivo il posizionamento potrebbe non essere correto.');
+2571 |         var posX = center[0];
+2572 |         var posY = center[1];
+2573 |         if (!pp.label.frameAnchor || pp.label.frameAnchor[0] == 'middle')
+2574 |           posX -= el.width() / 2;
+2575 |         else if (pp.label.frameAnchor && pp.label.frameAnchor[0] == 'end')
+2576 |           posX -= el.width();
+2577 |         if (!pp.label.frameAnchor || pp.label.frameAnchor[1] == 'middle')
+2578 |           posY -= el.height() / 2;
+2579 |         else if (pp.label.frameAnchor && pp.label.frameAnchor[1] == 'top')
+2580 |           posY -= el.height();
+2581 |         if (set_opacity)
+2582 |           el.css({ margin: posY + 'px 0 0 ' + posX + 'px', opacity : opacity});
+2583 |         else
+2584 |           el.css({ margin: posY + 'px 0 0 ' + posX + 'px'});
+2585 |         
+2586 |         /*pieces.push({
+2587 |           path : [ [ 'DOMELEMENT', el ] ], attr : false,
+2588 |           section: 'Series', serie : serie, index : index, subSection : 'Label'
+2589 |         });*/
+2590 |         return { path : [ [ 'DOMELEMENT', el ] ], attr : false };
+2591 | 
+2592 |       }
+2593 |     }
+2594 |     return false;
+2595 |   }
+2596 | }
+2597 | 
+2598 | $.elycharts.featuresmanager.register($.elycharts.labelmanager, 5);
+2599 | 
+2600 | })(jQuery);
+2601 | /********* Source File: src/elycharts_manager_legend.js*********/
+2602 | /**********************************************************************
+2603 |  * ELYCHARTS
+2604 |  * A Javascript library to generate interactive charts with vectorial graphics.
+2605 |  *
+2606 |  * Copyright (c) 2010-2014 Void Labs s.n.c. (http://void.it)
+2607 |  * Licensed under the MIT (http://creativecommons.org/licenses/MIT/) license.
+2608 |  **********************************************************************/
+2609 | 
+2610 | (function($) {
+2611 | 
+2612 | var common = $.elycharts.common;
+2613 | 
+2614 | /***********************************************************************
+2615 |  * FEATURE: LEGEND
+2616 |  **********************************************************************/
+2617 | 
+2618 | $.elycharts.legendmanager = {
+2619 |   
+2620 |   afterShow : function(env, pieces) {
+2621 | 	// TODO the whole thing should simply return "pieces" whose visibility is handled by core, so to enable animations and
+2622 |     // make things more generic.
+2623 |     if (env.legenditems) {
+2624 |     	for (item in env.legenditems) {
+2625 |     		env.legenditems[item].remove();
+2626 |     	}
+2627 |     	env.legenditems = false;
+2628 |     }
+2629 |     if (!env.opt.legend || env.opt.legend.length == 0)
+2630 |       return;
+2631 | 
+2632 |     var props = env.opt.features.legend;
+2633 |     
+2634 |     if (props === false) return;
+2635 | 
+2636 |     var propsx = props.x;
+2637 |     if (propsx == 'auto') {
+2638 |       var autox = 1;
+2639 |       propsx = 0;
+2640 |     }
+2641 |     var propswidth = props.width;
+2642 |     if (propswidth == 'auto') {
+2643 |       var autowidth = 1;
+2644 |       propswidth = env.width;
+2645 |     }
+2646 |     
+2647 |     var wauto = 0;
+2648 |     var items = [];
+2649 |     // env.opt.legend normalmente è { serie : 'Legend', ... }, per i pie invece { serie : ['Legend', ...], ... }
+2650 |     var legendCount = 0;
+2651 |     var serie, data, h, w, x, y, xd;
+2652 |     for (serie in env.opt.legend) {
+2653 |       if (env.opt.type != 'pie')
+2654 |         legendCount ++;
+2655 |       else
+2656 |         legendCount += env.opt.legend[serie].length;
+2657 |     }
+2658 |     var i = 0;
+2659 |     for (serie in env.opt.legend) {
+2660 |       if (env.opt.type != 'pie')
+2661 |         data = [ env.opt.legend[serie] ];
+2662 |       else
+2663 |         data = env.opt.legend[serie];
+2664 | 
+2665 |       for (var j = 0; j < data.length; j++) {
+2666 |         var sprops = common.areaProps(env, 'Series', serie, env.opt.type == 'pie' ? j : false);
+2667 |         var computedProps = $.extend(true, {}, props);
+2668 | 
+2669 |         if (sprops.legend)
+2670 |             computedProps = $.extend(true, computedProps, sprops.legend);
+2671 |         
+2672 |         var color = common.getItemColor(env, serie, env.opt.type == 'pie' ? j : false);
+2673 |         if (color) {
+2674 |           common.colorize(env, computedProps, [['dotProps', 'fill']], color);
+2675 |         }
+2676 | 
+2677 |         // legacy support for legend dot color inherited from pie "fill"
+2678 |         // TODO maybe we should simply remove this and leave the "color" support only
+2679 |         if (!computedProps.dotProps.fill && env.opt.type == 'pie') {
+2680 |           if (sprops.plotProps && sprops.plotProps.fill)
+2681 |             computedProps.dotProps.fill = sprops.plotProps.fill;
+2682 |         }
+2683 |         
+2684 |         var hMargin = props.margins ? props.margins[0] + props.margins[2] : 0;
+2685 |         var wMargin = props.margins ? props.margins[1] + props.margins[3] : 0;
+2686 |         var tMargin = props.margins ? props.margins[0] : 0;
+2687 |         var lMargin = props.margins ? props.margins[3] : 0;
+2688 |         
+2689 |         if (!props.horizontal) {
+2690 |           // Posizione dell'angolo in alto a sinistra
+2691 |           h = (props.height - hMargin) / legendCount;
+2692 |           w = propswidth - wMargin;
+2693 |           x = Math.floor(propsx + lMargin);
+2694 |           y = Math.floor(props.y + tMargin + h * i);
+2695 |         } else {
+2696 |           h = props.height - hMargin;
+2697 |           if (!props.itemWidth || props.itemWidth == 'fixed') {
+2698 |             w = (propswidth - wMargin) / legendCount;
+2699 |             x = Math.floor(propsx + lMargin + w * i);
+2700 |           } else {
+2701 |             w = (propswidth - wMargin) - wauto;
+2702 |             x = propsx + lMargin + wauto;
+2703 |           }
+2704 |           y = Math.floor(props.y + tMargin);
+2705 |         }
+2706 |         
+2707 |         if (computedProps.dotType == "rect") {
+2708 |           items.push(common.showPath(env, [ [ 'RECT', props.dotMargins[0] + x, y + Math.floor((h - computedProps.dotHeight) / 2), props.dotMargins[0] + x + computedProps.dotWidth, y + Math.floor((h - computedProps.dotHeight) / 2) + computedProps.dotHeight, computedProps.dotR ] ]).attr(computedProps.dotProps));
+2709 |           xd = props.dotMargins[0] + computedProps.dotWidth + props.dotMargins[1];
+2710 |         } else if (computedProps.dotType == "circle") {
+2711 |           items.push(common.showPath(env, [ [ 'CIRCLE', props.dotMargins[0] + x + computedProps.dotR, y + (h / 2), computedProps.dotR ] ]).attr(computedProps.dotProps));
+2712 |           xd = props.dotMargins[0] + computedProps.dotR * 2 + props.dotMargins[1];
+2713 |         }
+2714 |         
+2715 |         var text = data[j];
+2716 |         var t = common.showPath(env, [ [ 'TEXT', text, x + xd, y + Math.ceil(h / 2) + (Raphael.VML ? 2 : 0) ] ]).attr({"text-anchor" : "start"}).attr(computedProps.textProps); //.hide();
+2717 |         items.push(t);
+2718 |         while (t.getBBox().width > (w - xd) && t.getBBox().width > 10) {
+2719 |           text = text.substring(0, text.length - 1);
+2720 |           t.attr({text : text});
+2721 |         }
+2722 |         t.show();
+2723 |         
+2724 |         if (props.horizontal && props.itemWidth == 'auto')
+2725 |           wauto += xd + t.getBBox().width + 4;
+2726 |         else if (!props.horizontal && autowidth)
+2727 |           wauto = t.getBBox().width + xd > wauto ? t.getBBox().width + xd : wauto;
+2728 |         else
+2729 |           wauto += w;
+2730 | 
+2731 |         i++;
+2732 |       }
+2733 |     }
+2734 |       
+2735 |     if (autowidth)
+2736 |       propswidth = wauto + props.margins[3] + props.margins[1] - 1;
+2737 |     if (autox) {
+2738 |       propsx = Math.floor((env.width - propswidth) / 2);
+2739 |       for (i in items) {
+2740 |         if (items[i].attrs.x)
+2741 |           items[i].attr('x', items[i].attrs.x + propsx);
+2742 |         else
+2743 |           items[i].attr('path', common.movePath(env, items[i].attrs.path, [propsx, 0]));
+2744 |       }
+2745 |     }
+2746 |     var borderPath = [ [ 'RECT', propsx, props.y, propsx + propswidth, props.y + props.height, props.r ] ];
+2747 |     var border = common.showPath(env, borderPath).attr(props.borderProps);
+2748 | 
+2749 |     // The legend rectangle is written as the last one because it depends on the sizes of the contents but it should
+2750 |     // be drawn behind the others, so at the end we bring to front all items but the border
+2751 |     for(i in items) items[i].toFront();
+2752 |     
+2753 |     items.unshift(border);
+2754 |     
+2755 |     env.legenditems = items;
+2756 |   }
+2757 | }
+2758 | 
+2759 | $.elycharts.featuresmanager.register($.elycharts.legendmanager, 90);
+2760 | 
+2761 | })(jQuery);
+2762 | /********* Source File: src/elycharts_manager_mouse.js*********/
+2763 | /**********************************************************************
+2764 |  * ELYCHARTS
+2765 |  * A Javascript library to generate interactive charts with vectorial graphics.
+2766 |  *
+2767 |  * Copyright (c) 2010-2014 Void Labs s.n.c. (http://void.it)
+2768 |  * Licensed under the MIT (http://creativecommons.org/licenses/MIT/) license.
+2769 |  **********************************************************************/
+2770 | 
+2771 | (function($) {
+2772 | 
+2773 | var featuresmanager = $.elycharts.featuresmanager;
+2774 | var common = $.elycharts.common;
+2775 | 
+2776 | /***********************************************************************
+2777 |  * MOUSEMANAGER
+2778 |  **********************************************************************/
+2779 | 
+2780 | $.elycharts.mousemanager = {
+2781 | 
+2782 |   clear : function(env) {
+2783 |     if (env.mouseLayer) {
+2784 |       env.mouseLayer.remove();
+2785 |       env.mouseLayer = null;
+2786 |       env.mousePaper.clear();
+2787 |       env.mousePaper.remove();
+2788 |       env.mousePaper = null;
+2789 |       env.mouseTimer = null;
+2790 |       env.mouseAreas = null;
+2791 |       // NOTE: do we also need to unbind mouseover/mouseout from areas or is this handled automatically by Raphael?
+2792 |     }
+2793 |   },
+2794 |   
+2795 |   afterShow : function(env, pieces) {
+2796 |     if (!env.opt.interactive)
+2797 |       return;
+2798 |       
+2799 |     this.clear(env);
+2800 | 
+2801 |     env.mouseLayer = $('<div></div>').css({position : 'absolute', 'z-index' : 20, opacity : 1}).prependTo(env.container);
+2802 |     env.mousePaper = common._RaphaelInstance(env.mouseLayer.get(0), env.width, env.height);
+2803 |     var paper = env.mousePaper;
+2804 | 
+2805 |     if (env.opt.features.debug.active && typeof DP_Debug != 'undefined') {
+2806 |       env.paper.text(env.width, env.height - 5, 'DEBUG').attr({ 'text-anchor' : 'end', stroke: 'red', opacity: .1 });
+2807 |       paper.text(env.width, env.height - 5, 'DEBUG').attr({ 'text-anchor' : 'end', stroke: 'red', opacity: .1 }).click(function() {
+2808 |         DP_Debug.dump(env.opt, '', false, 4);
+2809 |       });
+2810 |     }
+2811 | 
+2812 |     var i, j;
+2813 | 
+2814 |     // Adding mouseover only in right area, based on pieces
+2815 |     env.mouseAreas = [];
+2816 |     if (env.opt.features.mousearea.type == 'single') {
+2817 |       // SINGLE: Every serie's index is an area
+2818 |       for (i = 0; i < pieces.length; i++) {
+2819 |         if (pieces[i].mousearea) {
+2820 |           // pathstep
+2821 |           if (!pieces[i].paths) {
+2822 |             // path standard, generating an area for each point
+2823 |             if (pieces[i].path.length >= 1 && (pieces[i].path[0][0] == 'LINE' || pieces[i].path[0][0] == 'LINEAREA'))
+2824 |               for (j = 0; j < pieces[i].path[0][1].length; j++) {
+2825 |                 var props = common.areaProps(env, pieces[i].section, pieces[i].serie);
+2826 |                 if (props.mouseareaShowOnNull || pieces[i].section != 'Series' || env.opt.values[pieces[i].serie][j] != null)
+2827 |                   env.mouseAreas.push({
+2828 |                     path : [ [ 'CIRCLE', pieces[i].path[0][1][j][0], pieces[i].path[0][1][j][1], 10 ] ],
+2829 |                     piece : pieces[i],
+2830 |                     pieces : pieces,
+2831 |                     index : j,
+2832 |                     props : props
+2833 |                   });
+2834 |               }
+2835 |               
+2836 |             else // Code below is only for standard path - it should be useless now (now there are only LINE and LINEAREA)
+2837 |               // TODO DELETE
+2838 |               for (j = 0; j < pieces[i].path.length; j++) {
+2839 |                 env.mouseAreas.push({
+2840 |                   path : [ [ 'CIRCLE', common.getX(pieces[i].path[j]), common.getY(pieces[i].path[j]), 10 ] ],
+2841 |                   piece : pieces[i],
+2842 |                   pieces : pieces,
+2843 |                   index : j,
+2844 |                   props : common.areaProps(env, pieces[i].section, pieces[i].serie)
+2845 |                 });
+2846 |               }
+2847 |             
+2848 |           // paths
+2849 |           } else if (pieces[i].paths) {
+2850 |             // Set of paths (bar graph?), generating overlapped areas
+2851 |             for (j = 0; j < pieces[i].paths.length; j++)
+2852 |               if (pieces[i].paths[j].path)
+2853 |                 env.mouseAreas.push({
+2854 |                   path : pieces[i].paths[j].path,
+2855 |                   piece : pieces[i],
+2856 |                   pieces : pieces,
+2857 |                   index : j,
+2858 |                   props : common.areaProps(env, pieces[i].section, pieces[i].serie)
+2859 |                 });
+2860 |           }
+2861 |         }
+2862 |       }
+2863 |     } else {
+2864 |       // INDEX: Each index (in every serie) is an area
+2865 |       var indexCenter = env.opt.features.mousearea.indexCenter;
+2866 |       if (indexCenter == 'auto')
+2867 |         indexCenter = env.indexCenter;
+2868 |       var start, delta;
+2869 |       if (indexCenter == 'bar') {
+2870 |         delta = (env.width - env.opt.margins[3] - env.opt.margins[1]) / (env.opt.labels.length > 0 ? env.opt.labels.length : 1);
+2871 |         start = env.opt.margins[3];
+2872 |       } else {
+2873 |         delta = (env.width - env.opt.margins[3] - env.opt.margins[1]) / (env.opt.labels.length > 1 ? env.opt.labels.length - 1 : 1);
+2874 |         start = env.opt.margins[3] - delta / 2;
+2875 |       }
+2876 | 
+2877 |       for (var idx in env.opt.labels) {
+2878 |       	// idx can be a string and concatenation results in bad sums.
+2879 |       	var index = parseInt(idx);
+2880 |         env.mouseAreas.push({
+2881 |           path : [ [ 'RECT', start + index * delta, env.height - env.opt.margins[2], start + (index + 1) * delta, env.opt.margins[0] ] ],
+2882 |           piece : false,
+2883 |           pieces : pieces,
+2884 |           index : parseInt(index),
+2885 |           props : env.opt.defaultSeries // TODO common.areaProps(env, 'Plot')
+2886 |         });
+2887 |       }
+2888 |     }
+2889 | 
+2890 |     var syncenv = false;
+2891 |     if (!env.opt.features.mousearea.syncTag) {
+2892 |       env.mouseareaenv = { chartEnv : false, mouseObj : false, caller : false, inArea : -1, timer : false };
+2893 |       syncenv = env.mouseareaenv;
+2894 |     } else {
+2895 |       if (!$.elycharts.mouseareaenv)
+2896 |         $.elycharts.mouseareaenv = {};
+2897 |       if (!$.elycharts.mouseareaenv[env.opt.features.mousearea.syncTag])
+2898 |         $.elycharts.mouseareaenv[env.opt.features.mousearea.syncTag] = { chartEnv : false, mouseObj : false, caller : false, inArea : -1, timer : false };
+2899 |       syncenv = $.elycharts.mouseareaenv[env.opt.features.mousearea.syncTag];
+2900 |     }
+2901 |     for (i = 0; i < env.mouseAreas.length; i++) {
+2902 |       env.mouseAreas[i].area = common.showPath(env, env.mouseAreas[i].path, paper).attr({stroke: "#000", fill: "#fff", opacity: 0});
+2903 |       
+2904 |       (function(env, obj, objidx, caller, syncenv) {
+2905 |         var piece = obj.piece;
+2906 |         var index = obj.index;
+2907 |         
+2908 |         obj.mouseover = function(e) {
+2909 |           //BIND: if (obj.listenerDisabled) return;
+2910 |           obj.event = e;
+2911 |           clearTimeout(syncenv.timer);
+2912 |           caller.onMouseOverArea(env, piece, index, obj);
+2913 |           
+2914 |           if (syncenv.chartEnv && syncenv.chartEnv.id != env.id) {
+2915 |             // Chart changed, removing old one
+2916 |             syncenv.caller.onMouseExitArea(syncenv.chartEnv, syncenv.mouseObj.piece, syncenv.mouseObj.index, syncenv.mouseObj);
+2917 |             caller.onMouseEnterArea(env, piece, index, obj);
+2918 |           } 
+2919 |           else if (syncenv.inArea != objidx) {
+2920 |             if (syncenv.inArea < 0)
+2921 |               caller.onMouseEnterArea(env, piece, index, obj);
+2922 |             else
+2923 |               caller.onMouseChangedArea(env, piece, index, obj);
+2924 |           }
+2925 |           syncenv.chartEnv = env;
+2926 |           syncenv.mouseObj = obj;
+2927 |           syncenv.caller = caller;
+2928 |           syncenv.inArea = objidx;
+2929 |         };
+2930 |         obj.mouseout = function(e) {
+2931 |           //BIND: if (obj.listenerDisabled) return;
+2932 |           obj.event = e;
+2933 |           clearTimeout(syncenv.timer);
+2934 |           caller.onMouseOutArea(env, piece, index, obj);
+2935 |           syncenv.timer = setTimeout(function() {
+2936 |             syncenv.timer = false;
+2937 |             caller.onMouseExitArea(env, piece, index, obj);
+2938 |             syncenv.chartEnv = false;
+2939 |             syncenv.inArea = -1;
+2940 |           }, env.opt.features.mousearea.areaMoveDelay);
+2941 |         };
+2942 |         
+2943 |         $(obj.area.node).mouseover(obj.mouseover);
+2944 |         $(obj.area.node).mouseout(obj.mouseout);
+2945 |       })(env, env.mouseAreas[i], i, this, syncenv);
+2946 |     }
+2947 |   },
+2948 |   
+2949 |   // Called when mouse enter an area
+2950 |   onMouseOverArea : function(env, piece, index, mouseAreaData) {
+2951 |     //console.warn('over', piece.serie, index);
+2952 |     if (env.opt.features.mousearea.onMouseOver)
+2953 |       env.opt.features.mousearea.onMouseOver(env, mouseAreaData.piece ? mouseAreaData.piece.serie : false, mouseAreaData.index, mouseAreaData);
+2954 |     featuresmanager.onMouseOver(env, mouseAreaData.piece ? mouseAreaData.piece.serie : false, mouseAreaData.index, mouseAreaData);
+2955 |   },
+2956 |   
+2957 |   // Called when mouse exit from an area
+2958 |   onMouseOutArea : function(env, piece, index, mouseAreaData) {
+2959 |     //console.warn('out', piece.serie, index);
+2960 |     if (env.opt.features.mousearea.onMouseOut)
+2961 |       env.opt.features.mousearea.onMouseOut(env, mouseAreaData.piece ? mouseAreaData.piece.serie : false, mouseAreaData.index, mouseAreaData);
+2962 |     featuresmanager.onMouseOut(env, mouseAreaData.piece ? mouseAreaData.piece.serie : false, mouseAreaData.index, mouseAreaData);
+2963 |   },
+2964 |   
+2965 |   // Called when mouse enter an area from empty space (= it was in no area before)
+2966 |   onMouseEnterArea : function(env, piece, index, mouseAreaData) {
+2967 |     //console.warn('enter', piece.serie, index);
+2968 |     if (env.opt.features.mousearea.onMouseEnter)
+2969 |       env.opt.features.mousearea.onMouseEnter(env, mouseAreaData.piece ? mouseAreaData.piece.serie : false, mouseAreaData.index, mouseAreaData);
+2970 |     featuresmanager.onMouseEnter(env, mouseAreaData.piece ? mouseAreaData.piece.serie : false, mouseAreaData.index, mouseAreaData);
+2971 |   },
+2972 | 
+2973 |   // Called when mouse enter an area and it was on another area
+2974 |   onMouseChangedArea : function(env, piece, index, mouseAreaData) {
+2975 |     //console.warn('changed', piece.serie, index);
+2976 |     if (env.opt.features.mousearea.onMouseChanged)
+2977 |       env.opt.features.mousearea.onMouseChanged(env, mouseAreaData.piece ? mouseAreaData.piece.serie : false, mouseAreaData.index, mouseAreaData);
+2978 |     featuresmanager.onMouseChanged(env, mouseAreaData.piece ? mouseAreaData.piece.serie : false, mouseAreaData.index, mouseAreaData);
+2979 |   },
+2980 |   
+2981 |   // Called when mouse leaves an area and does not enter in another one (timeout check)
+2982 |   onMouseExitArea : function(env, piece, index, mouseAreaData) {
+2983 |     //console.warn('exit', piece.serie, index);
+2984 |     if (env.opt.features.mousearea.onMouseExit)
+2985 |       env.opt.features.mousearea.onMouseExit(env, mouseAreaData.piece ? mouseAreaData.piece.serie : false, mouseAreaData.index, mouseAreaData);
+2986 |     featuresmanager.onMouseExit(env, mouseAreaData.piece ? mouseAreaData.piece.serie : false, mouseAreaData.index, mouseAreaData);
+2987 |   }
+2988 |   
+2989 | }
+2990 | 
+2991 | $.elycharts.featuresmanager.register($.elycharts.mousemanager, 0);
+2992 | 
+2993 | })(jQuery);
+2994 | /********* Source File: src/elycharts_manager_tooltip.js*********/
+2995 | /**********************************************************************
+2996 |  * ELYCHARTS
+2997 |  * A Javascript library to generate interactive charts with vectorial graphics.
+2998 |  *
+2999 |  * Copyright (c) 2010-2014 Void Labs s.n.c. (http://void.it)
+3000 |  * Licensed under the MIT (http://creativecommons.org/licenses/MIT/) license.
+3001 |  **********************************************************************/
+3002 | 
+3003 | (function($) {
+3004 | 
+3005 | var common = $.elycharts.common;
+3006 | 
+3007 | /***********************************************************************
+3008 |  * FEATURE: TOOLTIP
+3009 |  **********************************************************************/
+3010 | 
+3011 | $.elycharts.tooltipmanager = {
+3012 | 
+3013 |   clear : function(env) {
+3014 |     if (env.tooltipContainer) {
+3015 |       env.tooltipFrame.clear();
+3016 |       env.tooltipFrame.remove();
+3017 |       env.tooltipFrame = null;
+3018 |       env.tooltipFrameElement = null;
+3019 |       env.tooltipContent.remove();
+3020 |       env.tooltipContent = null;
+3021 |       env.tooltipContainer.remove();
+3022 |       env.tooltipContainer = null;
+3023 |     }
+3024 |   },
+3025 |   
+3026 |   afterShow : function(env, pieces) {
+3027 |   	this.clear(env);
+3028 |     
+3029 |     if (!$.elycharts.tooltipid)
+3030 |       $.elycharts.tooltipid = 0;
+3031 |     $.elycharts.tooltipid ++;
+3032 |     
+3033 |     // Preparo il tooltip
+3034 |     env.tooltipContainer = $('<div id="elycharts_tooltip_' + $.elycharts.tooltipid + '" style="position: absolute; top: 100; left: 100; z-index: 10; overflow: hidden; white-space: nowrap; display: none"><div id="elycharts_tooltip_' + $.elycharts.tooltipid + '_frame" style="position: absolute; top: 0; left: 0; z-index: -1"></div><div id="elycharts_tooltip_' + $.elycharts.tooltipid + '_content" style="cursor: default"></div></div>').appendTo(document.body);
+3035 |     env.tooltipFrame = common._RaphaelInstance('elycharts_tooltip_' + $.elycharts.tooltipid + '_frame', 500, 500);
+3036 |     env.tooltipContent = $('#elycharts_tooltip_' + $.elycharts.tooltipid + '_content');
+3037 |   },
+3038 |   
+3039 |   _prepareShow : function(env, props, mouseAreaData, tip) {
+3040 | 	    
+3041 |     // Il dimensionamento del tooltip e la view del frame SVG, lo fa solo se width ed height sono specificati
+3042 |     if (props.width && props.width != 'auto' && props.height && props.height != 'auto') {
+3043 |       var delta = props.frameProps && props.frameProps['stroke-width'] ? props.frameProps['stroke-width'] : 0;
+3044 |       env.tooltipContainer.width(props.width + delta + 1).height(props.height + delta + 1);
+3045 |       if (!env.tooltipFrameElement && props.frameProps) {
+3046 |     	var framePath = [ [ 'RECT', delta / 2, delta / 2, props.width, props.height, props.roundedCorners ] ];
+3047 |     	env.tooltipFrameElement = common.showPath(env, framePath, env.tooltipFrame).attr(props.frameProps);
+3048 |         // env.tooltipFrameElement = env.tooltipFrame.rect(delta / 2, delta / 2, props.width, props.height, props.roundedCorners);
+3049 |       }
+3050 |     }
+3051 | 
+3052 |     if (env.tooltipFrameElement) {
+3053 |       env.tooltipFrameElement.attr(props.frameProps);
+3054 |     }
+3055 | 
+3056 |     if (props.padding)
+3057 |       env.tooltipContent.css({ padding : props.padding[0] + 'px ' + props.padding[1] + 'px' });
+3058 |     env.tooltipContent.css(props.contentStyle);
+3059 |     env.tooltipContent.html(tip);
+3060 |     
+3061 |     //BIND: env.tooltipContainer.unbind().mouseover(mouseAreaData.mouseover).mouseout(mouseAreaData.mouseout);
+3062 |     
+3063 |     // WARN: Prendendo env.paper.canvas non va bene...
+3064 |     //var offset = $(env.paper.canvas).offset();
+3065 |     var offset = $(env.container).offset();
+3066 | 
+3067 |     if (env.opt.features.tooltip.fixedPos) {
+3068 |       offset.top += env.opt.features.tooltip.fixedPos[1];
+3069 |       offset.left += env.opt.features.tooltip.fixedPos[0];
+3070 | 
+3071 |     } else {
+3072 |       var coord = this.getXY(env, props, mouseAreaData);
+3073 |       if (!coord[2]) {
+3074 |         offset.left += coord[0];
+3075 |         while (offset.top + coord[1] < 0)
+3076 |           coord[1] += 20;
+3077 |         offset.top += coord[1];
+3078 |       } else {
+3079 |         offset.left = coord[0];
+3080 |         offset.top = coord[1];
+3081 |       }
+3082 |     }
+3083 |     
+3084 |     return { top : offset.top, left : offset.left };
+3085 |   },
+3086 |   
+3087 |   /**
+3088 |    * Ritorna [x, y] oppure [x, y, true] se le coordinate sono relative alla pagina (e non al grafico)
+3089 |    */
+3090 |   getXY : function(env, props, mouseAreaData) {
+3091 |     // NOTA Posizione mouse: mouseAreaData.event.pageX/pageY
+3092 |     var x = 0, y = 0;
+3093 |     if (mouseAreaData.path[0][0] == 'RECT') {
+3094 |       // L'area e' su un rettangolo (un bar o un indice completo), il tooltip lo faccio subito sopra
+3095 |       // Nota: per capire se e' sull'indice completo basta guardare mouseAreaData.piece == null
+3096 |       x = common.getX(mouseAreaData.path[0]) - props.offset[1];
+3097 |       y = common.getY(mouseAreaData.path[0]) - props.height - props.offset[0];
+3098 |     }
+3099 |     else if (mouseAreaData.path[0][0] == 'CIRCLE') {
+3100 |       // L'area e' su un cerchio (punto di un line)
+3101 |       x = common.getX(mouseAreaData.path[0]) - props.offset[1];
+3102 |       y = common.getY(mouseAreaData.path[0]) - props.height - props.offset[0];
+3103 |     }
+3104 |     else if (mouseAreaData.path[0][0] == 'SLICE') {
+3105 |       // L'area è su una fetta di torta (pie)
+3106 |       var path = mouseAreaData.path[0];
+3107 |       
+3108 |       // Genera la posizione del tip considerando che deve stare all'interno di un cerchio che è sempre dalla parte opposta dell'area
+3109 |       // e deve essere il piu' vicino possibile all'area
+3110 |       var w = props.width && props.width != 'auto' ? props.width : 100;
+3111 |       var h = props.height && props.height != 'auto' ? props.height : 100;
+3112 |       // Raggio del cerchio che contiene il tip
+3113 |       var cr = Math.sqrt(Math.pow(w,2) + Math.pow(h,2)) / 2;
+3114 |       if (cr > env.opt.r)
+3115 |               cr = env.opt.r;
+3116 |       
+3117 |       var tipangle = path[5] + (path[6] - path[5]) / 2 + 180;
+3118 |       var rad = Math.PI / 180;
+3119 |       x = path[1] + cr * Math.cos(- tipangle * rad) - w / 2;
+3120 |       y = path[2] + cr * Math.sin(- tipangle * rad) - h / 2;
+3121 |     }
+3122 |     else if (mouseAreaData.piece && mouseAreaData.piece.paths && mouseAreaData.index >= 0 && mouseAreaData.piece.paths[mouseAreaData.index] && mouseAreaData.piece.paths[mouseAreaData.index].rect) {
+3123 |       // L'area ha una forma complessa, ma abbiamo il rettangolo di contenimento (funnel)
+3124 |       var rect = mouseAreaData.piece.paths[mouseAreaData.index].rect;
+3125 |       x = rect[0] - props.offset[1];
+3126 |       y = rect[1] - props.height - props.offset[0];
+3127 |     }
+3128 |     
+3129 |     if (env.opt.features.tooltip.positionHandler)
+3130 |       return env.opt.features.tooltip.positionHandler(env, props, mouseAreaData, x, y);
+3131 |     else
+3132 |       return [x, y];
+3133 |   },
+3134 | 
+3135 |   getTip : function(env, serie, index) {
+3136 |     var tip = false;
+3137 |     if (env.opt.tooltips) {
+3138 |       if (typeof env.opt.tooltips == 'function')
+3139 |         tip = env.opt.tooltips(env, serie, index, serie && env.opt.values[serie] && env.opt.values[serie][index] ? env.opt.values[serie][index] : false, env.opt.labels && env.opt.labels[index] ? env.opt.labels[index] : false);
+3140 |       else {
+3141 |         if (serie && env.opt.tooltips[serie] && env.opt.tooltips[serie][index])
+3142 |           tip = env.opt.tooltips[serie][index];
+3143 |         else if (!serie && env.opt.tooltips[index])
+3144 |           tip = env.opt.tooltips[index];
+3145 |       }
+3146 |     }
+3147 |     return tip;
+3148 |   },
+3149 |   
+3150 |   _getProps : function(env, serie, index, mouseAreaData) {
+3151 |     var props = mouseAreaData.props.tooltip;
+3152 |     if (env.emptySeries && env.opt.series.empty)
+3153 |       props = $.extend(true, props, env.opt.series.empty.tooltip);
+3154 |     if (!props || !props.active)
+3155 |       return false;
+3156 |     
+3157 |     if (props.frameProps) {
+3158 |       var color = common.getItemColor(env, serie, index);
+3159 |       if (color) {
+3160 |         props = common._clone(props);
+3161 |         common.colorize(env, props, [['frameProps', 'stroke']], color);
+3162 |       }
+3163 |     }
+3164 |     return props;
+3165 |   },
+3166 |   
+3167 |   _fadeOut : function(env) {
+3168 |     env.tooltipContainer.fadeOut(env.opt.features.tooltip.fadeDelay);
+3169 |   },
+3170 |   
+3171 |   onMouseEnter : function(env, serie, index, mouseAreaData) {
+3172 |     var props = this._getProps(env, serie, index, mouseAreaData);
+3173 |     if (!props) return false;
+3174 | 
+3175 |     var tip = this.getTip(env, serie, index);
+3176 |     if (!tip) {
+3177 |     	this._fadeOut(env);
+3178 |     	return true;
+3179 |     }
+3180 | 
+3181 |     //if (!env.opt.tooltips || (serie && (!env.opt.tooltips[serie] || !env.opt.tooltips[serie][index])) || (!serie && !env.opt.tooltips[index]))
+3182 |     //  return this.onMouseExit(env, serie, index, mouseAreaData);
+3183 |     //var tip = serie ? env.opt.tooltips[serie][index] : env.opt.tooltips[index];
+3184 | 
+3185 |     env.tooltipContainer.css(this._prepareShow(env, props, mouseAreaData, tip)).fadeIn(env.opt.features.tooltip.fadeDelay);
+3186 | 
+3187 |     return true;
+3188 |   },
+3189 |   
+3190 |   onMouseChanged : function(env, serie, index, mouseAreaData) {
+3191 |     var props = this._getProps(env, serie, index, mouseAreaData);
+3192 |     if (!props) return false;
+3193 | 
+3194 |     var tip = this.getTip(env, serie, index);
+3195 |     if (!tip) {
+3196 |     	this._fadeOut(env);
+3197 |     	return true;
+3198 |     }
+3199 | 
+3200 |     /*if (!env.opt.tooltips || (serie && (!env.opt.tooltips[serie] || !env.opt.tooltips[serie][index])) || (!serie && !env.opt.tooltips[index]))
+3201 |       return this.onMouseExit(env, serie, index, mouseAreaData);
+3202 |     var tip = serie ? env.opt.tooltips[serie][index] : env.opt.tooltips[index];*/
+3203 |     
+3204 |     env.tooltipContainer.clearQueue();
+3205 |     
+3206 |     // NOTE: this is needed because sometimes we "fadeOut" during mouseChanged so we also have to fadeIn in that cases.
+3207 |     // For simplicity we always fadeIn every time.
+3208 |     env.tooltipContainer.fadeIn(env.opt.features.tooltip.fadeDelay);
+3209 |     // Nota: Non passo da animationStackPush, i tooltip non sono legati a piece
+3210 |     env.tooltipContainer.animate(this._prepareShow(env, props, mouseAreaData, tip), env.opt.features.tooltip.moveDelay, 'linear' /*swing*/);
+3211 | 
+3212 |     return true;
+3213 |   },
+3214 |   
+3215 |   onMouseExit : function(env, serie, index, mouseAreaData) {
+3216 |     var props = this._getProps(env, serie, index, mouseAreaData);
+3217 |     if (!props) return false;
+3218 | 
+3219 |     this._fadeOut(env);
+3220 | 
+3221 |     return true;
+3222 |   }
+3223 | }
+3224 | 
+3225 | $.elycharts.featuresmanager.register($.elycharts.tooltipmanager, 20);
+3226 | 
+3227 | })(jQuery);
+3228 | /********* Source File: src/elycharts_chart_line.js*********/
+3229 | /**********************************************************************
+3230 |  * ELYCHARTS
+3231 |  * A Javascript library to generate interactive charts with vectorial graphics.
+3232 |  *
+3233 |  * Copyright (c) 2010-2014 Void Labs s.n.c. (http://void.it)
+3234 |  * Licensed under the MIT (http://creativecommons.org/licenses/MIT/) license.
+3235 |  **********************************************************************/
+3236 | 
+3237 | (function($) {
+3238 | 
+3239 | var common = $.elycharts.common;
+3240 | 
+3241 | /***********************************************************************
+3242 |  * CHART: LINE/BAR
+3243 |  **********************************************************************/
+3244 | 
+3245 | $.elycharts.line = {
+3246 |   init : function($env) {
+3247 |   },
+3248 |   
+3249 |   _getColorizationKey : function($type) {
+3250 |     if ($type == 'line') return [
+3251 |       ['plotProps', 'stroke'],
+3252 |       ['dotProps', 'fill'],
+3253 |       ['fillProps', 'fill']
+3254 |     ]; else return [
+3255 |       ['plotProps', 'stroke'],
+3256 |       ['plotProps', 'fill']
+3257 |     ];
+3258 |   },
+3259 |   
+3260 |   draw : function(env) {
+3261 |     if (common.executeIfChanged(env, ['values', 'series'])) {
+3262 |       env.plots = {};
+3263 |       env.axis = { x : {} };
+3264 |       env.barno = 0;
+3265 |       env.indexCenter = 'line';
+3266 |     }
+3267 |     
+3268 |     var opt = env.opt;
+3269 |     var plots = env.plots;
+3270 |     var axis = env.axis;
+3271 |     var paper = env.paper;
+3272 |     
+3273 |     var values = env.opt.values;
+3274 |     var labels = env.opt.labels;
+3275 |     var i, cum, props, serie, plot, labelsCount;
+3276 |     
+3277 |     // Valorizzazione di tutte le opzioni utili e le impostazioni interne di ogni grafico e dell'ambiente di lavoro
+3278 |     if (common.executeIfChanged(env, ['values', 'series'])) {
+3279 |       var idx = 0;
+3280 |       var prevVisibleSerie = false;
+3281 |       for (serie in values) {
+3282 |         plot = {
+3283 |           index : idx,
+3284 |           type : false,
+3285 |           visible : false
+3286 |         };
+3287 |         plots[serie] = plot;
+3288 |         if (values[serie]) {
+3289 |           props = common.areaProps(env, 'Series', serie);
+3290 |           plot.type = props.type;
+3291 |           if (props.type == 'bar')
+3292 |             env.indexCenter = 'bar';
+3293 |           
+3294 |           if (props.visible) {
+3295 |             plot.visible = true;
+3296 |             if (!labelsCount || labelsCount < values[serie].length)
+3297 |               labelsCount = values[serie].length;
+3298 |             
+3299 |             // Values
+3300 |             // showValues: manage NULL elements (doing an avg of near points) for line serie
+3301 |             var showValues = []
+3302 |             for (i = 0; i < values[serie].length; i++) {
+3303 |               var val = values[serie][i];
+3304 |               if (props.avgOverNulls && val == null) {
+3305 |                 if (props.type == 'bar')
+3306 |                   val = 0;
+3307 |                 else {
+3308 |                   for (var j = i + 1; j < values[serie].length && values[serie][j] == null; j++) {}
+3309 |                   var next = j < values[serie].length ? values[serie][j] : null;
+3310 |                   for (var k = i -1; k >= 0 && values[serie][k] == null; k--) {}
+3311 |                   var prev = k >= 0 ? values[serie][k] : null;
+3312 |                   val = next != null ? (prev != null ? (next * (i - k) + prev * (j - i)) / (j - k) : next) : prev;
+3313 |                 }
+3314 |               }
+3315 |               showValues.push(val);
+3316 |             }
+3317 | 
+3318 |             if (props.stacked && !(typeof props.stacked == 'string'))
+3319 |               props.stacked = prevVisibleSerie;
+3320 |             
+3321 |             if (typeof props.stacked == 'undefined' || props.stacked == serie || props.stacked < 0 || !plots[props.stacked] || !plots[props.stacked].visible || plots[props.stacked].type != plot.type) {
+3322 |               // NOT Stacked
+3323 |               plot.ref = serie;
+3324 |               if (props.type == 'bar')
+3325 |                 plot.barno = env.barno ++;
+3326 |               plot.from = [];
+3327 |               if (!props.cumulative)
+3328 |                 plot.to = showValues;
+3329 |               else {
+3330 |                 plot.to = [];
+3331 |                 cum = 0;
+3332 |                 for (i = 0; i < showValues.length; i++)
+3333 |                   plot.to.push(cum += showValues[i] != null ? showValues[i] : 0);
+3334 |               }
+3335 |               for (i = 0; i < showValues.length; i++)
+3336 |                 plot.from.push(plot.to[i] != null ? 0 : null);
+3337 | 
+3338 |             } else {
+3339 |               // Stacked
+3340 |               plot.ref = props.stacked;
+3341 |               if (props.type == 'bar')
+3342 |                 plot.barno = plots[props.stacked].barno;
+3343 |               plot.from = plots[props.stacked].stack;
+3344 |               plot.to = [];
+3345 |               cum = 0;
+3346 |               if (!props.cumulative)
+3347 |                 for (i = 0; i < showValues.length; i++)
+3348 |                   plot.to.push(plot.from[i] + (showValues[i] != null ? showValues[i] : 0));
+3349 |               else
+3350 |                 for (i = 0; i < showValues.length; i++)
+3351 |                   plot.to.push(plot.from[i] + (cum += (showValues[i] != null ? showValues[i] : 0)));
+3352 |               plots[props.stacked].stack = plot.to;
+3353 |             }
+3354 |             
+3355 |             plot.stack = plot.to;
+3356 |             plot.max = Math.max.apply(Math, plot.from.concat(plot.to));
+3357 |             plot.min = Math.min.apply(Math, plot.from.concat(plot.to));
+3358 |             
+3359 |             // Assi (DEP: values, series)
+3360 |             if (props.axis) {
+3361 |               if (!axis[props.axis])
+3362 |                 axis[props.axis] = { plots : [] };
+3363 |               axis[props.axis].plots.push(serie);
+3364 |               if (typeof axis[props.axis].max == 'undefined')
+3365 |                 axis[props.axis].max = plot.max;
+3366 |               else
+3367 |                 axis[props.axis].max = Math.max(axis[props.axis].max, plot.max);
+3368 |               if (typeof axis[props.axis].min == 'undefined')
+3369 |                 axis[props.axis].min = plot.min;
+3370 |               else
+3371 |                 axis[props.axis].min = Math.min(axis[props.axis].min, plot.min);
+3372 |             }
+3373 |             
+3374 |             prevVisibleSerie = serie;
+3375 |           }
+3376 |         }
+3377 |       }
+3378 |     }
+3379 | 
+3380 |     // Labels normalization (if not set or less  than values)
+3381 |     if (!labels)
+3382 |       labels = [];
+3383 |     while (labelsCount > labels.length)
+3384 |       labels.push(null);
+3385 |     labelsCount = labels.length;
+3386 |     env.opt.labels = labels;
+3387 | 
+3388 |     // Prepare axis scale (values, series, axis)
+3389 |     if (common.executeIfChanged(env, ['values', 'series', 'axis'])) {
+3390 |       for (var lidx in axis) {
+3391 |         props = common.areaProps(env, 'Axis', lidx);
+3392 |         axis[lidx].props = props;
+3393 |         
+3394 |         if (typeof props.max != 'undefined')
+3395 |           axis[lidx].max = props.max;
+3396 |         if (typeof props.min != 'undefined')
+3397 |           axis[lidx].min = props.min;
+3398 | 
+3399 |         if (axis[lidx].min == axis[lidx].max)
+3400 |           axis[lidx].max = axis[lidx].min + 1;
+3401 | 
+3402 |         if (props.normalize && props.normalize > 0) {
+3403 |           var v = Math.abs(axis[lidx].max);
+3404 |           if (axis[lidx].min && Math.abs(axis[lidx].min) > v)
+3405 |             v = Math.abs(axis[lidx].min);
+3406 |           if (v) {
+3407 |             var basev = Math.floor(Math.log(v)/Math.LN10) - (props.normalize - 1);
+3408 |             // NOTE: On firefox Math.pow(10, -X) sometimes results in number noise (0.89999...), it's better to do 1/Math.pow(10,X)
+3409 |             basev = basev >= 0 ? Math.pow(10, basev) : 1 / Math.pow(10, -basev);
+3410 |             v = Math.ceil(v / basev / (opt.features.grid.ny ? opt.features.grid.ny : 1)) * basev * (opt.features.grid.ny ? opt.features.grid.ny : 1);
+3411 |             // Calculation above, with decimal number sometimes insert some noise in numbers (eg: 8.899999... instead of 0.9), so i need to round result with proper precision
+3412 |             v = Math.round(v / basev) * basev;
+3413 |             // I need to store the normalization base for further roundin (eg: in axis label, sometimes calculation results in "number noise", so i need to round them with proper precision)
+3414 |             axis[lidx].normalizationBase = basev;
+3415 |             if (axis[lidx].max)
+3416 |               axis[lidx].max = Math.ceil(axis[lidx].max / v) * v;
+3417 |             if (axis[lidx].min)
+3418 |               axis[lidx].min = Math.floor(axis[lidx].min / v) * v;
+3419 |           }
+3420 |         }
+3421 |         if (axis[lidx].plots)
+3422 |           for (var ii = 0; ii < axis[lidx].plots.length; ii++) {
+3423 |             plots[axis[lidx].plots[ii]].max = axis[lidx].max;
+3424 |             plots[axis[lidx].plots[ii]].min = axis[lidx].min;
+3425 |           }
+3426 |       }
+3427 |     }
+3428 | 
+3429 |     var pieces = [];
+3430 |     
+3431 |     this.grid(env, pieces);
+3432 |     
+3433 |     // DEP: *
+3434 |     var deltaX = (env.width - opt.margins[3] - opt.margins[1]) / (labels.length > 1 ? labels.length - 1 : 1);
+3435 |     var deltaBarX = (env.width - opt.margins[3] - opt.margins[1]) / (labels.length > 0 ? labels.length : 1);
+3436 | 
+3437 |     for (serie in values) {
+3438 |       props = common.areaProps(env, 'Series', serie);
+3439 |       plot = plots[serie];
+3440 | 
+3441 |       common.colorize(env, props, this._getColorizationKey(props.type), common.getItemColor(env, serie));
+3442 |       
+3443 |       // TODO Settare una props in questo modo potrebbe incasinare la gestione degli update parziali (se iso "lineCenter: auto" e passo da un grafico con indexCenter = bar a uno con indexCenter = line)
+3444 |       if (props.lineCenter && props.lineCenter == 'auto')
+3445 |         props.lineCenter = (env.indexCenter == 'bar');
+3446 |       else if (props.lineCenter && env.indexCenter == 'line')
+3447 |         env.indexCenter = 'bar';
+3448 | 
+3449 |       if (values[serie] && props.visible) {
+3450 |         var deltaY = (env.height - opt.margins[2] - opt.margins[0]) / (plot.max - plot.min);
+3451 |         
+3452 |         if (props.type == 'line') {
+3453 |           // LINE CHART
+3454 |           var linePath = [ 'LINE', [], props.rounded ];
+3455 |           var fillPath = [ 'LINEAREA', [], [], props.rounded ];
+3456 |           var dotPieces = [];
+3457 |           
+3458 |           for (i = 0, ii = labels.length; i < ii; i++)
+3459 |             if (plot.to.length > i) {
+3460 |               var indexProps = common.areaProps(env, 'Series', serie, i);
+3461 | 
+3462 |               common.colorize(env, indexProps, this._getColorizationKey(props.type), common.getItemColor(env, serie, i));
+3463 | 
+3464 |               var x = Math.round((props.lineCenter ? deltaBarX / 2 : 0) + opt.margins[3] + i * (props.lineCenter ? deltaBarX : deltaX));
+3465 | 
+3466 |               var y = null;
+3467 |               if (plot.to[i] != null) {
+3468 |                 var d = plot.to[i] > plot.max ? plot.max : (plot.to[i] < plot.min ? plot.min : plot.to[i]);
+3469 |                 y = Math.round(env.height - opt.margins[2] - deltaY * (d - plot.min));
+3470 |               }
+3471 |               var yy = null;
+3472 |               if (plot.from[i] != null) {
+3473 |                 var dd = plot.from[i] > plot.max ? plot.max : (plot.from[i] < plot.min ? plot.min : plot.from[i]);
+3474 |                 yy = Math.round(env.height - opt.margins[2] - deltaY * (dd - plot.min)) + (Raphael.VML ? 1 : 0);
+3475 |               }
+3476 | 
+3477 |               linePath[1].push([x, y]);
+3478 | 
+3479 |               if (props.fill) {
+3480 |                 fillPath[1].push([x, y]);
+3481 |                 fillPath[2].push([x, yy]);
+3482 |               }
+3483 |               if (indexProps.dot) {
+3484 |                 if (values[serie][i] == null && !indexProps.dotShowOnNull)
+3485 |                   dotPieces.push({path : false, attr : false});
+3486 |                 else
+3487 |                   dotPieces.push({path : [ [ 'CIRCLE', x, y, indexProps.dotProps.size ] ], attr : indexProps.dotProps}); // TODO Size should not be in dotProps (not an svg props)
+3488 |               }
+3489 |             }
+3490 | 
+3491 |           if (props.fill)
+3492 |             pieces.push({ section : 'Series', serie : serie, subSection : 'Fill', path : [ fillPath ], attr : props.fillProps });
+3493 |           else 
+3494 |             pieces.push({ section : 'Series', serie : serie, subSection : 'Fill', path : false, attr : false });
+3495 |           pieces.push({ section : 'Series', serie : serie, subSection : 'Plot', path : [ linePath ], attr : props.plotProps , mousearea : 'pathsteps'});
+3496 |           
+3497 |           if (dotPieces.length)
+3498 |             pieces.push({ section : 'Series', serie : serie, subSection : 'Dot', paths : dotPieces });
+3499 |           else
+3500 |             pieces.push({ section : 'Series', serie : serie, subSection : 'Dot', path : false, attr : false });
+3501 |           
+3502 |         } else {
+3503 |           pieceBar = [];
+3504 |           // BAR CHART
+3505 |           for (i = 0, ii = labels.length; i < ii; i++)
+3506 |             if (plot.to.length > i) {
+3507 |               if (plot.from[i] != plot.to[i]) {
+3508 |                 var indexProps = common.areaProps(env, 'Series', serie, i);
+3509 |                 common.colorize(env, indexProps, this._getColorizationKey(props.type), common.getItemColor(env, serie, i));
+3510 |             	  
+3511 |             	var bwid = Math.floor((deltaBarX - opt.barMargins) / (1 + (env.barno - 1) * (100 - opt.barOverlapPerc) / 100));
+3512 |                 var bpad = bwid * (100 - props.barWidthPerc) / 200;
+3513 |                 var boff = opt.barMargins / 2 + plot.barno * (bwid * (100 - opt.barOverlapPerc) / 100);
+3514 | 
+3515 |                 var x1 = Math.floor(opt.margins[3] + i * deltaBarX + boff + bpad);
+3516 |                 var y1 = Math.round(env.height - opt.margins[2] - deltaY * (plot.to[i] - plot.min));
+3517 |                 var y2 = Math.round(env.height - opt.margins[2] - deltaY * (plot.from[i] - plot.min));
+3518 | 
+3519 |                 pieceBar.push({path : [ [ 'RECT', x1, y1, x1 + bwid - bpad * 2, y2 ] ], attr : indexProps.plotProps });
+3520 |               } else
+3521 |                 pieceBar.push({path : false, attr : false });
+3522 |             }
+3523 |           
+3524 |           if (pieceBar.length)
+3525 |             pieces.push({ section : 'Series', serie : serie, subSection : 'Plot', paths: pieceBar, mousearea : 'paths' });
+3526 |           else
+3527 |             pieces.push({ section : 'Series', serie : serie, subSection : 'Plot', path: false, attr: false, mousearea : 'paths' });
+3528 |         }
+3529 |         
+3530 |       } else {
+3531 |         // Grafico non visibile / senza dati, deve comunque inserire i piece vuoti (NELLO STESSO ORDINE SOPRA!)
+3532 |         if (props.type == 'line')
+3533 |           pieces.push({ section : 'Series', serie : serie, subSection : 'Fill', path : false, attr : false });
+3534 |         pieces.push({ section : 'Series', serie : serie, subSection : 'Plot', path: false, attr: false, mousearea : 'paths' });
+3535 |         if (props.type == 'line')
+3536 |           pieces.push({ section : 'Series', serie : serie, subSection : 'Dot', path : false, attr : false });
+3537 |       }
+3538 |     }
+3539 |     return pieces;
+3540 |   }, 
+3541 |   
+3542 |   grid : function(env, pieces) {
+3543 | 
+3544 |     // DEP: axis, [=> series, values], labels, margins, width, height, grid*
+3545 |     if (common.executeIfChanged(env, ['values', 'series', 'axis', 'labels', 'margins', 'width', 'height', 'features.grid'])) {
+3546 |       var opt = env.opt;
+3547 |       var props = env.opt.features.grid;
+3548 |       var paper = env.paper;
+3549 |       var axis = env.axis;
+3550 |       var labels = env.opt.labels;
+3551 |       var deltaX = (env.width - opt.margins[3] - opt.margins[1]) / (labels.length > 1 ? labels.length - 1 : 1);
+3552 |       var deltaBarX = (env.width - opt.margins[3] - opt.margins[1]) / (labels.length > 0 ? labels.length : 1);
+3553 |       var i, j, x, y, lw, labx, laby, labe, val, txt;
+3554 |       // Label X axis
+3555 |       var paths = [];
+3556 |       var labelsCenter = props.labelsCenter;
+3557 |       if (labelsCenter == 'auto')
+3558 |         labelsCenter = (env.indexCenter == 'bar');
+3559 | 
+3560 |       if (axis.x && axis.x.props.labels) {
+3561 |         // used in case of labelsHideCovered, contains a "rotated" representation of the rect coordinates occupied by the last shown label
+3562 |         var lastShownLabelRect = false;
+3563 |         // labelsAnchor is "auto" by default. Can be "start","middle" or "end". If "auto" then it is automatically set depending on labelsRotate.
+3564 |         var labelsAnchor = axis.x.props.labelsAnchor || 'auto';
+3565 |         // Automatic labelsAnchor is "middle" on no rotation, otherwise the anchor is the higher side of the label.
+3566 |         if (labelsAnchor == 'auto')
+3567 |           labelsAnchor = axis.x.props.labelsRotate > 0 ? "start" : (axis.x.props.labelsRotate == 0 ? "middle" : "end");
+3568 |         // labelsPos is "auto" by default. Can be "start", "middle" or "end". If "auto" then it is automatically set depending on labelsCenter and labelsRotate and labelsAnchor.
+3569 |         var labelsPos = axis.x.props.labelsPos || 'auto';
+3570 |         // in labelsCenter (bar) it is middle when there is no rotation, equals to labelsAnchor on rotation.
+3571 |         // in !labelsCenter (line) is is always 'start';
+3572 |         if (labelsPos == 'auto')
+3573 |           labelsPos = labelsCenter ? (axis.x.props.labelsRotate == 0 ? labelsAnchor : 'middle') : 'start';
+3574 |               
+3575 |         for (i = 0; i < labels.length; i++) 
+3576 |           if ((typeof labels[i] != 'boolean' && labels[i] != null) || labels[i]) {
+3577 |             if (!axis.x.props.labelsSkip || i >= axis.x.props.labelsSkip) {
+3578 |               val = labels[i];
+3579 |               
+3580 |               if (axis.x.props.labelsFormatHandler)
+3581 |                 val = axis.x.props.labelsFormatHandler(val);
+3582 |               txt = (axis.x.props.prefix ? axis.x.props.prefix : "") + val + (axis.x.props.suffix ? axis.x.props.suffix : "");
+3583 | 
+3584 |               labx = opt.margins[3] + i * (labelsCenter ? deltaBarX : deltaX) + (axis.x.props.labelsMargin ? axis.x.props.labelsMargin : 0);
+3585 |               if (labelsPos == 'middle') labx += (labelsCenter ? deltaBarX : deltaX) / 2;
+3586 |               if (labelsPos == 'end') labx += (labelsCenter ? deltaBarX : deltaX);
+3587 | 
+3588 |               laby = env.height - opt.margins[2] + axis.x.props.labelsDistance;
+3589 |               labe = paper.text(labx, laby, txt).attr(axis.x.props.labelsProps).toBack();
+3590 | 
+3591 |               labe.attr({"text-anchor" : labelsAnchor});
+3592 |               
+3593 |               // will contain the boundingbox size, or false if it is hidden.
+3594 |               var boundingbox = false;
+3595 |               var bbox = labe.getBBox();
+3596 |               var p1 = {x: bbox.x, y: bbox.y};
+3597 |               var p2 = {x: bbox.x+bbox.width, y: bbox.y+bbox.height};
+3598 |               var o1 = {x: labx, y: laby};
+3599 |               
+3600 |               rotate = function (p, rad) {
+3601 |                 var X = p.x * Math.cos(rad) - p.y * Math.sin(rad),
+3602 |                     Y = p.x * Math.sin(rad) + p.y * Math.cos(rad);
+3603 |                 return {x: X, y: Y};
+3604 |               }; 
+3605 |               // calculate collision between non rotated rects with vertext p1-p2 and t1-t2
+3606 |               // this algorythm works only for horizontal rects (alpha = 0)
+3607 |               // "dist" is the length added as a margin to the rects before collision detection
+3608 |               collide = function(r1,r2,dist) {
+3609 |                 xor = function(a,b) {
+3610 |                   return ( a || b ) && !( a && b );
+3611 |                 }
+3612 |                 if (r1.alpha != r2.alpha) throw "collide doens't support rects with different rotations";
+3613 |                 var r1p1r = rotate({x: r1.p1.x-dist, y:r1.p1.y-dist}, -r1.alpha);
+3614 |                 var r1p2r = rotate({x: r1.p2.x+dist, y:r1.p2.y+dist}, -r1.alpha);
+3615 |                 var r2p1r = rotate({x: r2.p1.x-dist, y:r2.p1.y-dist}, -r2.alpha);
+3616 |                 var r2p2r = rotate({x: r2.p2.x+dist, y:r2.p2.y+dist}, -r2.alpha);
+3617 |                 return !xor(Math.min(r1p1r.x,r1p2r.x) > Math.max(r2p1r.x,r2p2r.x), Math.max(r1p1r.x,r1p2r.x) < Math.min(r2p1r.x,r2p2r.x)) &&
+3618 |                         !xor(Math.min(r1p1r.y,r1p2r.y) > Math.max(r2p1r.y,r2p2r.y), Math.max(r1p1r.y,r1p2r.y) < Math.min(r2p1r.y,r2p2r.y));
+3619 |               }
+3620 |               // compute equivalent orizontal rotated rect
+3621 |               rotated = function(rect, origin, alpha) {
+3622 |                 translate = function (p1, p2) {
+3623 |                   return {x: p1.x+p2.x, y: p1.y+p2.y};
+3624 |                 };
+3625 |                 negate = function(p1) {
+3626 |                   return {x: -p1.x, y: -p1.y};
+3627 |                 };
+3628 |                 var p1trt = translate(rotate(translate(rect.p1,negate(origin)), alpha),origin);
+3629 |                 var p2trt = translate(rotate(translate(rect.p2,negate(origin)), alpha),origin);
+3630 |                 return { p1: p1trt, p2: p2trt, alpha: rect.alpha+alpha };
+3631 |               }
+3632 |               bbox = function(rect) {
+3633 |                 if (rect.alpha == 0) {
+3634 |                   return { x: rect.p1.x, y: rect.p1.y, width: rect.p2.x-rect.p1.x, height: rect.p2.y-rect.p1.y };
+3635 |                 } else {
+3636 |                   var points = [];
+3637 |                   points.push({ x: 0, y: 0 });
+3638 |                   points.push({ x: rect.p2.x-rect.p1.x, y: 0 });
+3639 |                   points.push({ x: 0, y: rect.p2.y-rect.p1.y });
+3640 |                   points.push({ x: rect.p2.x-rect.p1.x, y: rect.p2.y-rect.p1.y });
+3641 |                   var bb = [];
+3642 |                   bb['left'] = 0; bb['right'] = 0; bb['top'] = 0; bb['bottom'] = 0;
+3643 |                   for (_px = 0; _px < points.length; _px++) {
+3644 |                     var p = points[_px];
+3645 |                     var newX = parseInt((p.x * Math.cos(rect.alpha)) + (p.y * Math.sin(rect.alpha)));
+3646 |                     var newY = parseInt((p.x * Math.sin(rect.alpha)) + (p.y * Math.cos(rect.alpha)));
+3647 |                     bb['left'] = Math.min(bb['left'], newX);
+3648 |                     bb['right'] = Math.max(bb['right'], newX);
+3649 |                     bb['top'] = Math.min(bb['top'], newY);
+3650 |                     bb['bottom'] = Math.max(bb['bottom'], newY);
+3651 |                   }
+3652 |                   var newWidth = parseInt(Math.abs(bb['right'] - bb['left']));
+3653 |                   var newHeight = parseInt(Math.abs(bb['bottom'] - bb['top']));
+3654 |                   var newX = ((rect.p1.x + rect.p2.x) / 2) - newWidth / 2;
+3655 |                   var newY = ((rect.p1.y + rect.p2.y) / 2) - newHeight / 2;
+3656 |                   return { x: newX, y: newY, width: newWidth, height: newHeight };
+3657 |                 }
+3658 |               }
+3659 | 
+3660 |               var alpha = Raphael.rad(axis.x.props.labelsRotate);
+3661 |               // compute used "rect" so to be able to check if there is overlapping with previous ones.
+3662 |               var rect = rotated({p1: p1, p2: p2, alpha: 0}, o1, alpha);
+3663 |       
+3664 |               //console.log('bbox ',p1, p2, rect, props.nx, val, rect.p1, rect.p2, rect.alpha, boundingbox, env.width);
+3665 |               // se collide con l'ultimo mostrato non lo mostro.
+3666 |               var dist = axis.x.props.labelsMarginRight ? axis.x.props.labelsMarginRight / 2 : 0;
+3667 |               if (axis.x.props.labelsHideCovered && lastShownLabelRect && collide(rect, lastShownLabelRect, dist)) {
+3668 |               	labe.hide();
+3669 |               	// labels[i] = false;
+3670 |               } else {
+3671 |                 boundingbox = bbox(rect);
+3672 |                 // Manage label overflow
+3673 |                 if (props.nx == 'auto' && (boundingbox.x < 0 || boundingbox.x+boundingbox.width > env.width)) {
+3674 |                   labe.hide();
+3675 |                   // labels[i] = false;
+3676 |                 } else {
+3677 |                   lastShownLabelRect = rect;
+3678 |                 }
+3679 |               }
+3680 | 
+3681 |               // Apply rotation to the element.
+3682 |               if (axis.x.props.labelsRotate) {
+3683 |                 if (Raphael.animation) {
+3684 |                   labe.transform(Raphael.format('r{0},{1},{2}', axis.x.props.labelsRotate, labx, laby)).toBack();
+3685 |                 } else {
+3686 |                   labe.rotate(axis.x.props.labelsRotate, labx, laby).toBack();
+3687 |                 }
+3688 |               }
+3689 | 
+3690 |               paths.push({ path : [ [ 'RELEMENT', labe ] ], attr : false });
+3691 |             }
+3692 |           }
+3693 |       }
+3694 |       pieces.push({ section : 'Axis', serie : 'x', subSection : 'Label', paths : paths });
+3695 |           
+3696 |       // Title X Axis
+3697 |       if (axis.x && axis.x.props.title) {
+3698 |         x = opt.margins[3] + Math.floor((env.width - opt.margins[1] - opt.margins[3]) / 2);
+3699 |         y = env.height - opt.margins[2] + axis.x.props.titleDistance * (Raphael.VML ? axis.x.props.titleDistanceIE : 1);
+3700 |         //paper.text(x, y, axis.x.props.title).attr(axis.x.props.titleProps);
+3701 |         pieces.push({ section : 'Axis', serie : 'x', subSection : 'Title', path : [ [ 'TEXT', axis.x.props.title, x, y ] ], attr : axis.x.props.titleProps });
+3702 |       } else
+3703 |         pieces.push({ section : 'Axis', serie : 'x', subSection : 'Title', path : false, attr : false });
+3704 | 
+3705 |       // Label + Title L/R Axis
+3706 |       for (var jj in ['l', 'r']) {
+3707 |         j = ['l', 'r'][jj];
+3708 |         if (axis[j] && axis[j].props.labels && props.ny) {
+3709 |           paths = [];
+3710 |           for (i = axis[j].props.labelsSkip ? axis[j].props.labelsSkip : 0; i <= props.ny; i++) {
+3711 |             var deltaY = (env.height - opt.margins[2] - opt.margins[0]) / props.ny;
+3712 |             // TODO we should never set "props". We should use local variables for derived value (so to correctly deal with updates) 
+3713 |             if (j == 'r') {
+3714 |               labx = env.width - opt.margins[1] + axis[j].props.labelsDistance;
+3715 |               if (!axis[j].props.labelsProps["text-anchor"])
+3716 |                 axis[j].props.labelsProps["text-anchor"] = "start";
+3717 |             } else {
+3718 |               labx = opt.margins[3] - axis[j].props.labelsDistance;
+3719 |               if (!axis[j].props.labelsProps["text-anchor"])
+3720 |                 axis[j].props.labelsProps["text-anchor"] = "end";
+3721 |             }
+3722 |             if (axis[j].props.labelsAnchor && axis[j].props.labelsAnchor != 'auto')
+3723 |               axis[j].props.labelsProps["text-anchor"] = axis[j].props.labelsAnchor;
+3724 |             // NOTE: Parenthesis () around division are useful to keep right number precision
+3725 |             val = (axis[j].min + (i * ((axis[j].max - axis[j].min) / props.ny)));
+3726 |             // Rounding with proper precision for "number sharpening"
+3727 |             if (axis[j].normalizationBase)
+3728 |               // I use (1 / ( 1 / norm ) ) to avoid some noise
+3729 |               val = Math.round(val / axis[j].normalizationBase) / ( 1 / axis[j].normalizationBase );
+3730 | 
+3731 |             if (axis[j].props.labelsFormatHandler)
+3732 |               val = axis[j].props.labelsFormatHandler(val);
+3733 |             if (axis[j].props.labelsCompactUnits)
+3734 |               val = common.compactUnits(val, axis[j].props.labelsCompactUnits);
+3735 |             txt = (axis[j].props.prefix ? axis[j].props.prefix : "") + val + (axis[j].props.suffix ? axis[j].props.suffix : "");
+3736 |             laby = env.height - opt.margins[2] - i * deltaY;
+3737 |             //var labe = paper.text(labx, laby + (axis[j].props.labelsMargin ? axis[j].props.labelsMargin : 0), txt).attr(axis[j].props.labelsProps).toBack();
+3738 |             paths.push( { path : [ [ 'TEXT', txt, labx, laby + (axis[j].props.labelsMargin ? axis[j].props.labelsMargin : 0) ] ], attr : axis[j].props.labelsProps });
+3739 |           }
+3740 |           pieces.push({ section : 'Axis', serie : j, subSection : 'Label', paths : paths });
+3741 |         } else
+3742 |           pieces.push({ section : 'Axis', serie : j, subSection : 'Label', paths : [] });
+3743 | 
+3744 |         if (axis[j] && axis[j].props.title) {
+3745 |           if (j == 'r')
+3746 |             x = env.width - opt.margins[1] + axis[j].props.titleDistance * (Raphael.VML ? axis[j].props.titleDistanceIE : 1);
+3747 |           else
+3748 |             x = opt.margins[3] - axis[j].props.titleDistance * (Raphael.VML ? axis[j].props.titleDistanceIE : 1);
+3749 |           //paper.text(x, opt.margins[0] + Math.floor((env.height - opt.margins[0] - opt.margins[2]) / 2), axis[j].props.title).attr(axis[j].props.titleProps).attr({rotation : j == 'l' ? 270 : 90});
+3750 |           var attr = common._clone(axis[j].props.titleProps);
+3751 |           var rotation = j == 'l' ? 270 : 90;
+3752 |           var y = opt.margins[0] + Math.floor((env.height - opt.margins[0] - opt.margins[2]) / 2);
+3753 |           // Raphael 2 does not support .rotation
+3754 |           if (Raphael.animation) {
+3755 |             var labe = paper.text(x, y, axis[j].props.title).attr(attr).transform(Raphael.format('r{0}', rotation)).toBack();
+3756 |             pieces.push({ section : 'Axis', serie : j, subSection : 'Title', path : [ [ 'RELEMENT', labe ] ], attr : false });
+3757 |           } else {
+3758 |             attr.rotation = rotation;
+3759 |             pieces.push({ section : 'Axis', serie : j, subSection : 'Title', path : [ [ 'TEXT', axis[j].props.title, x, y ] ], attr : attr });
+3760 |           }
+3761 |         } else
+3762 |           pieces.push({ section : 'Axis', serie : j, subSection : 'Title', path : false, attr : false });
+3763 |       }
+3764 |       
+3765 |       // Grid
+3766 |       if (props.nx || props.ny) {
+3767 |         var path = [], bandsH = [], bandsV = [],
+3768 |           nx = props.nx == 'auto' ? (labelsCenter ? labels.length : labels.length - 1) : props.nx,
+3769 |           ny = props.ny,
+3770 |           rowHeight = (env.height - opt.margins[2] - opt.margins[0]) / (ny ? ny : 1),
+3771 |           columnWidth = (env.width - opt.margins[1] - opt.margins[3]) / (nx ? nx : 1),
+3772 |           forceBorderX1 = typeof props.forceBorder == 'object' ? props.forceBorder[3] : props.forceBorder,
+3773 |           forceBorderX2 = typeof props.forceBorder == 'object' ? props.forceBorder[1] : props.forceBorder,
+3774 |           forceBorderY1 = typeof props.forceBorder == 'object' ? props.forceBorder[0] : props.forceBorder,
+3775 |           forceBorderY2 = typeof props.forceBorder == 'object' ? props.forceBorder[2] : props.forceBorder,
+3776 |           drawH = ny > 0 ? (typeof props.draw == 'object' ? props.draw[0] : props.draw) : false,
+3777 |           drawV = nx > 0 ? typeof props.draw == 'object' ? props.draw[1] : props.draw : false;
+3778 | 
+3779 |         if (ny > 0)
+3780 |           for (i = 0; i < ny + 1; i++) {
+3781 |             if (
+3782 |               forceBorderY1 && i == 0 || // Show top line only if forced
+3783 |               forceBorderY2 && i == ny ||  // Show bottom line only if forced
+3784 |               drawH && i > 0 && i < ny // Show  other lines if draw = true
+3785 |             ) {
+3786 |               path.push(["M", opt.margins[3] - props.extra[3], opt.margins[0] + Math.round(i * rowHeight) ]);
+3787 |               path.push(["L", env.width - opt.margins[1] + props.extra[1], opt.margins[0] + Math.round(i * rowHeight)]);
+3788 |             }
+3789 |             if (i < ny) {
+3790 |               if (i % 2 == 0 && props.evenHProps || i % 2 == 1 && props.oddHProps)
+3791 |                 bandsH.push({path : [ [ 'RECT',
+3792 |                       opt.margins[3] - props.extra[3], opt.margins[0] + Math.round(i * rowHeight), // x1, y1
+3793 |                       env.width - opt.margins[1] + props.extra[1], opt.margins[0] + Math.round((i + 1) * rowHeight) // x2, y2
+3794 |                   ] ], attr : i % 2 == 0 ? props.evenHProps : props.oddHProps });
+3795 |               else
+3796 |                 bandsH.push({ path : false, attr: false})
+3797 |             }
+3798 |           }
+3799 | 
+3800 |         for (i = 0; i < nx + 1; i++) {
+3801 |           if (
+3802 |             forceBorderX1 && i == 0 || // Always show first line if forced
+3803 |             forceBorderX2 && i == nx || // Always show last line if forced
+3804 |             drawV && ( // To show other lines draw must be true
+3805 |               (props.nx != 'auto' && i > 0 && i < nx) || // If nx = [number] show other lines (first and last are managed above with forceBorder)
+3806 |               (props.nx == 'auto' && (typeof labels[i] != 'boolean' || labels[i])) // if nx = 'auto' show all lines if a label is associated
+3807 |             )
+3808 |             // Show all lines if props.nx is a number, or if label != false, AND draw must be true
+3809 |           ) {
+3810 |             path.push(["M", opt.margins[3] + Math.round(i * columnWidth), opt.margins[0] - props.extra[0] ]); //(t ? props.extra[0] : 0)]);
+3811 |             path.push(["L", opt.margins[3] + Math.round(i * columnWidth), env.height - opt.margins[2] + props.extra[2] ]); //(t ? props.extra[2] : 0)]);
+3812 |           }
+3813 |           if (i < nx) {
+3814 |             if (i % 2 == 0 && props.evenVProps || i % 2 == 1 && props.oddVProps)
+3815 |               bandsV.push({path : [ [ 'RECT',
+3816 |                     opt.margins[3] + Math.round(i * columnWidth), opt.margins[0] - props.extra[0], // x1, y1
+3817 |                     opt.margins[3] + Math.round((i + 1) * columnWidth), env.height - opt.margins[2] + props.extra[2], // x2, y2
+3818 |                 ] ], attr : i % 2 == 0 ? props.evenVProps : props.oddVProps });
+3819 |             else
+3820 |               bandsV.push({ path : false, attr: false})
+3821 |           }
+3822 |         }
+3823 |         
+3824 |         pieces.push({ section : 'Grid', path : path.length ? path : false, attr : path.length ? props.props : false });
+3825 |         pieces.push({ section : 'GridBandH', paths : bandsH });
+3826 |         pieces.push({ section : 'GridBandV', paths : bandsV });
+3827 | 
+3828 |         var tpath = [];
+3829 |         
+3830 |         // Ticks asse X
+3831 |         if (props.ticks.active && (typeof props.ticks.active != 'object' || props.ticks.active[0])) {
+3832 |           for (i = 0; i < nx + 1; i++) {
+3833 |             if (props.nx != 'auto' || typeof labels[i] != 'boolean' || labels[i]) {
+3834 |               tpath.push(["M", opt.margins[3] + Math.round(i * columnWidth), env.height - opt.margins[2] - props.ticks.size[1] ]);
+3835 |               tpath.push(["L", opt.margins[3] + Math.round(i * columnWidth), env.height - opt.margins[2] + props.ticks.size[0] ]);
+3836 |             }
+3837 |           }
+3838 |         }
+3839 |         // Ticks asse L
+3840 |         if (props.ticks.active && (typeof props.ticks.active != 'object' || props.ticks.active[1]))
+3841 |           for (i = 0; i < ny + 1; i++) {
+3842 |             tpath.push(["M", opt.margins[3] - props.ticks.size[0], opt.margins[0] + Math.round(i * rowHeight) ]);
+3843 |             tpath.push(["L", opt.margins[3] + props.ticks.size[1], opt.margins[0] + Math.round(i * rowHeight)]);
+3844 |           }
+3845 |         // Ticks asse R
+3846 |         if (props.ticks.active && (typeof props.ticks.active != 'object' || props.ticks.active[2]))
+3847 |           for (i = 0; i < ny + 1; i++) {
+3848 |             tpath.push(["M", env.width - opt.margins[1] - props.ticks.size[1], opt.margins[0] + Math.round(i * rowHeight) ]);
+3849 |             tpath.push(["L", env.width - opt.margins[1] + props.ticks.size[0], opt.margins[0] + Math.round(i * rowHeight)]);
+3850 |           }
+3851 |         
+3852 |         pieces.push({ section : 'Ticks', path : tpath.length ? tpath : false, attr : tpath.length ? props.ticks.props : false });
+3853 |       }
+3854 |     }
+3855 |   }
+3856 | }
+3857 | 
+3858 | })(jQuery);
+3859 | /********* Source File: src/elycharts_chart_pie.js*********/
+3860 | /**********************************************************************
+3861 |  * ELYCHARTS
+3862 |  * A Javascript library to generate interactive charts with vectorial graphics.
+3863 |  *
+3864 |  * Copyright (c) 2010-2014 Void Labs s.n.c. (http://void.it)
+3865 |  * Licensed under the MIT (http://creativecommons.org/licenses/MIT/) license.
+3866 |  **********************************************************************/
+3867 | 
+3868 | (function($) {
+3869 | 
+3870 | var common = $.elycharts.common;
+3871 | 
+3872 | /***********************************************************************
+3873 |  * CHART: PIE
+3874 |  **********************************************************************/
+3875 | 
+3876 | $.elycharts.pie = {
+3877 |   init : function($env) {
+3878 |   },
+3879 |   
+3880 |   draw : function(env) {
+3881 |     //var paper = env.paper;
+3882 |     var opt = env.opt;
+3883 |     
+3884 |     var w = env.width - env.opt.margins[1] - env.opt.margins[3];
+3885 |     var h = env.height - env.opt.margins[0] - env.opt.margins[2];
+3886 |     var r = env.opt.r ? env.opt.r : Math.floor((w < h ? w : h) / 2 * (env.opt.rPerc ? env.opt.rPerc / 100 : 0.8));
+3887 |     var cx = (env.opt.cx ? env.opt.cx : Math.floor(w / 2)) + env.opt.margins[3];
+3888 |     var cy = (env.opt.cy ? env.opt.cy : Math.floor(h / 2)) + env.opt.margins[0];
+3889 |     
+3890 |     var cnt = 0, i, ii, serie, plot, props;
+3891 |     for (serie in opt.values) {
+3892 |       plot = {
+3893 |         visible : false,
+3894 |         total : 0,
+3895 |         values : []
+3896 |       };
+3897 |       env.plots[serie] = plot;
+3898 |       var serieProps = common.areaProps(env, 'Series', serie);
+3899 |       common.colorize(env, serieProps, [['plotProps','stroke'],['plotProps','fill']], common.getItemColor(env, serie));
+3900 |       if (serieProps.visible) {
+3901 |         plot.visible = true;
+3902 |         cnt ++;
+3903 |         plot.values = opt.values[serie];
+3904 |         for (i = 0, ii = plot.values.length; i < ii; i++)
+3905 |           if (plot.values[i] > 0) {
+3906 |             props = common.areaProps(env, 'Series', serie, i);
+3907 |             common.colorize(env, props, [['plotProps','stroke'],['plotProps','fill']], common.getItemColor(env, serie, i));
+3908 |             if (typeof props.inside == 'undefined' || props.inside < 0)
+3909 |               plot.total += plot.values[i];
+3910 |           }
+3911 |         for (i = 0; i < ii; i++)
+3912 |           if (plot.values[i] < plot.total * opt.valueThresold) {
+3913 |             plot.total = plot.total - plot.values[i];
+3914 |             plot.values[i] = 0;
+3915 |           }
+3916 |       }
+3917 |     }
+3918 |     
+3919 |     var rstep = r / cnt;
+3920 |     var rstart = -rstep, rend = 0;
+3921 |       
+3922 |     var pieces = [];
+3923 |     for (serie in opt.values) {
+3924 |       plot = env.plots[serie];
+3925 |       var paths = [];
+3926 |       if (plot.visible) {
+3927 |         rstart += rstep;
+3928 |         rend += rstep;
+3929 |         var angle = env.opt.startAngle, angleplus = 0, anglelimit = 0;
+3930 |       
+3931 |         if (plot.total == 0) {
+3932 |           env.emptySeries = true;
+3933 |           props = common.areaProps(env, 'Series', 'empty');
+3934 |           common.colorize(env, props, [['plotProps','stroke'],['plotProps','fill']], common.getItemColor(env, serie));
+3935 |           paths.push({ path : [ [ 'CIRCLE', cx, cy, r ] ], attr : props.plotProps });
+3936 | 
+3937 |         } else {
+3938 |           env.emptySeries = false;
+3939 |           for (i = 0, ii = plot.values.length; i < ii; i++) {
+3940 |             var value = plot.values[i];
+3941 |             if (value > 0) {
+3942 |               props = common.areaProps(env, 'Series', serie, i);
+3943 |               common.colorize(env, props, [['plotProps','stroke'],['plotProps','fill']], common.getItemColor(env, serie, i));
+3944 |               if (typeof props.inside == 'undefined' || props.inside < 0) {
+3945 |                 angle += anglelimit;
+3946 |                 angleplus = 360 * value / plot.total;
+3947 |                 anglelimit = angleplus;
+3948 |               } else {
+3949 |                 angleplus = 360 * values[props.inside] / plot.total * value / values[props.inside];
+3950 |               }
+3951 |               var rrstart = rstart, rrend = rend;
+3952 |               if (props.r) {
+3953 |                 if (props.r > 0) {
+3954 |                   if (props.r <= 1)
+3955 |                     rrend = rstart + rstep * props.r;
+3956 |                   else
+3957 |                     rrend = rstart + props.r;
+3958 |                 } else {
+3959 |                   if (props.r >= -1)
+3960 |                     rrstart = rstart + rstep * (-props.r);
+3961 |                   else
+3962 |                     rrstart = rstart - props.r;
+3963 |                 }
+3964 |               }
+3965 |               if (!env.opt.clockwise)
+3966 |                 paths.push({ path : [ [ 'SLICE', cx, cy, rrend, rrstart, angle, angle + angleplus ] ], attr : props.plotProps });
+3967 |               else
+3968 |                 paths.push({ path : [ [ 'SLICE', cx, cy, rrend, rrstart, - angle - angleplus, - angle ] ], attr : props.plotProps });
+3969 |             } else
+3970 |               paths.push({ path : false, attr : false });
+3971 |           }
+3972 |         }
+3973 |       } else {
+3974 |         // Even if serie is not visible it's better to put some empty path (for better transitions). It's not mandatory, just better
+3975 |         if (opt.values[serie] && opt.values[serie].length)
+3976 |           for (i = 0, ii = opt.values[serie].length; i < ii; i++)
+3977 |             paths.push({ path : false, attr : false });
+3978 |       }
+3979 | 
+3980 |       pieces.push({ section : 'Series', serie : serie, subSection : 'Plot', paths : paths , mousearea : 'paths'});
+3981 |     }
+3982 |     
+3983 |     return pieces;
+3984 |   }
+3985 | }
+3986 | 
+3987 | })(jQuery);

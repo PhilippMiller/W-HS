@@ -1,0 +1,5 @@
+Dies ist eine Testdatei,
+die nur fünf Zeilen hat.
+Und weil dies schon die
+4. Zeile ist, ist jetzt
+Schluss!
