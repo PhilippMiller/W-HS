@@ -11,8 +11,8 @@ public class Aufgabe1 {
 			if (vollkommen(i))
 				System.out.println(i);
 		}
-		zeit = ((zeit - System.currentTimeMillis())*-1)/1000;
-		System.out.println("Es wurden " + zeit + " Sekunden benötigt!");
+		///zeit = ((zeit - System.currentTimeMillis())*-1)/1000;
+		System.out.println("Es wurden " + zeit + " Millisekunden benötigt!");
 		
 	}
 	
