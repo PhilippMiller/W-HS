@@ -37,6 +37,8 @@ public class Aufgabe29 {
 				bw.write(lnr.getLineNumber() + " | " + line + System.lineSeparator());
 			}
 			bw.close();
+			br_input.close();
+			br_output.close();
 			System.out.println(lnr.getLineNumber() + " Zeilen wurden erfolgreich eingelesen.");
 			
 		} catch (FileNotFoundException e) {

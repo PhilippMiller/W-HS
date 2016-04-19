@@ -18,7 +18,7 @@ public class Aufgabe2 {
 			zeit /= 60;
 			sek_min = "Minuten";
 		}
-		System.out.println("Es wurden " + zeit + sek_min + " benötigt!");
+		System.out.println("Es wurden " + zeit + " " + sek_min + " benötigt!");
 	}
 	
 	private static boolean isPrimzahl(int zahl) {
