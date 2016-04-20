@@ -5,7 +5,7 @@ public class Challenge {
 		
 		System.out.println("Gib die Jahre zur Berechnung an: ");
 		int jahre = io.read_int();
-		System.out.println("\n\n\n");
+		System.out.println("\n\n");
 		
 		long start = System.currentTimeMillis();
 		System.out.println(fibRekursiv(jahre));
@@ -32,13 +32,12 @@ public class Challenge {
 	}
 
 	static int fibIterativ(int jahre) {
-		int hasen = 0;
-		
 		if (jahre <= 0)
 			return 0;
 		if (jahre == 1)
 			return 1;
 		
+		int hasen = 0;
 		int f_1 = 0;
 		int f_2 = 1;
 		
