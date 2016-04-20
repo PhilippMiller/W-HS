@@ -10,8 +10,8 @@ public class Main {
 	public static void main(String[] args) {
 		float eigenkapital = 60000f;
 		Comparable<Immobilie> angebote[] = new Immobilie[6];
-		angebote[0] = new Eigentumswohnung("Fichtenweg", 100, 80, 10.0f, 400000.00f, true, eigenkapital);
-		angebote[1] = new Eigentumswohnung("Tannenweg", 100, 80, 10.0f, 400000.01f, true, eigenkapital);
+		angebote[0] = new Eigentumswohnung("Plattenweg", 400, 250, 7.6f, 300000.00f, true, eigenkapital);
+		angebote[1] = new Eigentumswohnung("Tannenweg", 420, 320, 6.5f, 30000.00f, true, eigenkapital);
 		angebote[2] = new Mehrfamilienhaus("Buchenweg", 120, 100, 10.0f, 580000.0f, 10, eigenkapital);
 		angebote[3] = new Eigentumswohnung("Eichenweg", 50, 45, 15.0f, 89000.0f, false, eigenkapital);
 		angebote[4] = new Mehrfamilienhaus("Sternstrasse", 200, 80, 15.0f, 1200000, 13, eigenkapital);
