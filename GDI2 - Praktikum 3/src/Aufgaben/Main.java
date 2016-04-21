@@ -24,7 +24,7 @@ public class Main {
 		a2.link(m2);
 
 		Firma f1 = new Firma();
-		f1.setName("Komm und Klau GmbH.");
+		f1.setName("Schnell und Sicher Spedition GmbH.");
 		f1.setSitz("Bocholt");
 		f1.setChef(chef);
 		f1.link(a1);
