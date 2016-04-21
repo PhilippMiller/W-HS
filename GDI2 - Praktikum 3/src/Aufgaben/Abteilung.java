@@ -12,12 +12,14 @@ import java.util.*;
  */
 
 class Abteilung {
+	protected static int counter = 0;
 	
 	protected List<Mitarbeiter> ma;
 	String bezeichnung;
 
 	Abteilung() {
 		this.ma = new LinkedList<Mitarbeiter>();
+		counter++;
 	}
 	
 	Abteilung(String bezeichnung) {
