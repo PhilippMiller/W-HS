@@ -10,11 +10,11 @@ class TreeTest
 		dictionary.put("left", "links");
 		dictionary.put("right", "rechts");
 	
-		System.out.println(dictionary.size());
 		System.out.println("Engl.: "+"root"+" Dt.: "+dictionary.get("root"));
 		System.out.println("Engl.: "+"node"+" Dt.: "+dictionary.get("node"));
 		System.out.println("Engl.: "+"bla"+" Dt.: "+dictionary.get("bla"));
 	
+		System.out.println(dictionary.size());
 		dictionary.print();
 		
 		dictionary.remove("tree");

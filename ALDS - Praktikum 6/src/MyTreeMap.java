@@ -1,48 +1,43 @@
+import java.util.ArrayList;
+
 /**
  * Implementierung eines binären Suchbaums
  *
- * Beachte: 
- * Der Suchbaum ist kein ausgeglichener Baum.
- * Er kann durch Einfüge- und Löschoperationen zu einer
- * linearen Liste entarten.
+ * Beachte: Der Suchbaum ist kein ausgeglichener Baum. Er kann durch Einfüge-
+ * und Löschoperationen zu einer linearen Liste entarten.
  *
- * Die gespeicherten Objektreferenzen für Werte dürfen 
- * nicht gleich null sein.
+ * Die gespeicherten Objektreferenzen für Werte dürfen nicht gleich null sein.
  *
  */
-public class MyTreeMap
-{
-	/** 
+public class MyTreeMap {
+	/**
 	 * Innere Klasse für die Knoten des binären Sucbaumes
 	 */
-	class Node 
-	{
-		// Attribute 
+	class Node {
+		// Attribute
 		Comparable key; // Verweis auf Schlüssel-Objekt
-		Object value;   // Verweis auf Wert-Objekt
-		Node left;      // Verweis auf linken Kindknoten
-		Node right;     // Verweis auf rechten Kindknoten
-		
+		Object value; // Verweis auf Wert-Objekt
+		Node left; // Verweis auf linken Kindknoten
+		Node right; // Verweis auf rechten Kindknoten
+
 		// Konstruktor
-		Node(Comparable key, Object value)
-		{
-	    	this.key = key;
-	    	this.value = value;
-	    	this.left = null;
-	    	this.right = null;
-	    }
-    }
+		Node(Comparable key, Object value) {
+			this.key = key;
+			this.value = value;
+			this.left = null;
+			this.right = null;
+		}
+	}
 
 	// Attribute (Klasse MyTreeMap)
-	private Node root;   // Verweis auf Wurzelknoten des Binärbaumes
-	private int size;    // Anzahl der Knoten des Binärbaumes
-	
+	private Node root; // Verweis auf Wurzelknoten des Binärbaumes
+	private int size; // Anzahl der Knoten des Binärbaumes
+
 	// Konstruktor (Klasse MyTreeMap)
 	/**
 	 * Erzeugung eines leeren Binärbaums
 	 */
-	public MyTreeMap()
-	{
+	public MyTreeMap() {
 		this.root = null;
 		this.size = 0;
 	}
@@ -51,234 +46,215 @@ public class MyTreeMap
 	/**
 	 * Bestimmung der Anzahl der Knoten im Binärbaum
 	 */
-	public int size()
-	{
+	public int size() {
 		return this.size;
 	}
 
 	/*
-	 * Bestimmung eines Knotens, der einen vorgegebenen Schlüssel enthält
-	 * mit Hilfe eines rekursiven Algorithmus
-	 * Die Operation setzt voraus, dass key ungleich null ist. 
-	 */	
-	private Node getNodeRec(Comparable key, Node tree) 
-	{
+	 * Bestimmung eines Knotens, der einen vorgegebenen Schlüssel enthält mit
+	 * Hilfe eines rekursiven Algorithmus Die Operation setzt voraus, dass key
+	 * ungleich null ist.
+	 */
+	private Node getNodeRec(Comparable key, Node tree) {
 		Node result;
-		
-		if (tree==null)			// Baum ist leer
+
+		if (tree == null) // Baum ist leer
 			result = null;
-		else
-		{
+		else {
 			int cmp = key.compareTo(tree.key);
-			if (cmp==0)			// Knoten ist gefunden
-			    result = tree;
-			else if(cmp<0)      // Suchen im linken Teilbaum
+			if (cmp == 0) // Knoten ist gefunden
+				result = tree;
+			else if (cmp < 0) // Suchen im linken Teilbaum
 				result = getNodeRec(key, tree.left);
-			else			    // Suchen im rechten Teilbaum
+			else // Suchen im rechten Teilbaum
 				result = getNodeRec(key, tree.right);
 		}
-		
+
 		return result;
 	}
 
 	/*
-	 * Bestimmung eines Knotens, der einen vorgegebenen Schlüssel enthält
-	 * mit Hilfe eines iterativen Algorithmus
-	 * Die Operation setzt voraus, dass key ungleich null ist. 
-	 */	
+	 * Bestimmung eines Knotens, der einen vorgegebenen Schlüssel enthält mit
+	 * Hilfe eines iterativen Algorithmus Die Operation setzt voraus, dass key
+	 * ungleich null ist.
+	 */
 	private Node getNodeIt(Comparable key, Node tree) 
 	{
-		Node result;
+		if (tree == null) {
+			return null;
+		}
 		
-		result = null;
-
-
-		// Hier Lösung einfügen
-
+		Node result0 = tree;	
 		
-		return result;
+		while (result0 != null) {
+			
+			int comp = key.compareTo(result0.key);
+			if (comp == 0)
+				return result0;
+			else if (comp < 0) {
+				result0 = result0.left;
+			} else {
+				result0 = result0.right;
+			}
+			
+		}
+		
+		return result0;
 	}
- 
+
 	/**
-	 * Bestimmung des Wertes zu einem vorgegebenen Schlüssel 
-	 */	
-	Object get(Comparable key) 
-	{
+	 * Bestimmung des Wertes zu einem vorgegebenen Schlüssel
+	 */
+	Object get(Comparable key) {
 		Object result = null;
-		
-		if (key!=null)
-		{
-			Node p = getNodeRec(key, this.root);
-			if (p!=null)
+
+		if (key != null) {
+			// Node p = getNodeRec(key, this.root);
+			Node p = getNodeIt(key, this.root);
+			if (p != null)
 				result = p.value;
 		}
 
-   		return result;
+		return result;
 	}
 
 	/**
 	 * Überprüfung, ob ein zu o inhaltsgleiches Objekt als Werte-Objekt
 	 * enthalten ist
-	 */	
-	boolean containsValue(Object o) 
-	{
+	 */
+	boolean containsValue(Object o) {
 		return containsValueRec(o, this.root);
 	}
 
-	private boolean containsValueRec(Object o, Node tree) 
-	{
+	private boolean containsValueRec(Object o, Node tree) {
 		boolean result = false;
 
 		// Hier Lösung einfügen
-		
-   		return result;
-	}
 
-	
-	/*
-	 * Rekursives Verfahren zum Einfügen eines Paares (key,value) 
-	 * in den Binärbaum mit dem Wurzelknoten tree.
-	 * Ist der Schlüssel key schon vorhanden, wird der alte
-	 * Wert durch den Wert value ersetzt.
-	 * Als Ergebnis wir ein Baum zurückgeliefert, der das 
-	 * Paar (key, value) enthält.
-	 */	
-	private Node insertNode(Comparable key, Object value, Node tree) 
-	{
-		if (tree==null)
-		{						// Neuen Knoten erzeugen
-			tree = new Node(key, value);
-			this.size++;
-		}
-		else
-		{
-			int cmp = key.compareTo(tree.key);
-			if (cmp==0)
-			{
-				// Alter Wert wir durch neuen Wert ersetzt
-				tree.value = value;
-			}
-			else if(cmp<0)      // Einfügen im linken Teilbaum
-				tree.left = insertNode(key, value, tree.left);
-			else			    // Einfügen im rechten Teilbaum
-				tree.right = insertNode(key, value, tree.right);
-		}
-		
-		return tree;
-	}
-
-	/**
-	 * Einfügen eines Paares (key,value) in den Binärbaum
-	 * Ist der Schlüssel key schon vorhanden, wird der alte
-	 * Wert durch den Wert value ersetzt.
-	 */
-	void put(Comparable key, Object value)
-	{
-		if (key!=null && value!=null)
-			this.root = insertNode(key, value, this.root);
-	}	
-	
-	/*
-	 * Bestimmung des Elternknotens des symmetrischen Nachfolgers
-	 * des Knotens tree
-	 *
-	 * Der symmetrische Nachfolger eines Knotens, ist der Knoten
-	 * mit dem kleinsten Schlüssel, der größer als der Schlüssel
-	 * des Knotens tree ist.
-	 * Dieser ist der am weitesten links stehende Knoten im rechten
-	 * Teilbaum des Knotens tree.
-	 */
-	private Node parentSymSucc(Node tree)
-	{
-		Node result;
-		
-		result = tree;
-		if (result.right.left!=null)
-		{
-			result = result.right;
-			while (result.left.left!=null)
-				result = result.left;
-		}
-		
 		return result;
 	}
 
 	/*
-	 * Rekursives Verfahren zum Entfernen eines Knotens zu einem
-	 * vorgegebenen Schlüssel im Binärbaum mit dem Wurzelknoten tree.
-	 * Als Ergebnis wir ein Baum zurückgeliefert, der den Schlüssel 
-	 * key nicht mehr enthält.
-	 */				
-	private Node removeNode(Comparable key, Node tree)
-	{
-		if (tree!=null)
-		{
+	 * Rekursives Verfahren zum Einfügen eines Paares (key,value) in den
+	 * Binärbaum mit dem Wurzelknoten tree. Ist der Schlüssel key schon
+	 * vorhanden, wird der alte Wert durch den Wert value ersetzt. Als Ergebnis
+	 * wir ein Baum zurückgeliefert, der das Paar (key, value) enthält.
+	 */
+	private Node insertNode(Comparable key, Object value, Node tree) {
+		if (tree == null) { // Neuen Knoten erzeugen
+			tree = new Node(key, value);
+			this.size++;
+		} else {
 			int cmp = key.compareTo(tree.key);
-			if (cmp<0)		// Entfernen im linken Teilbaum
+			if (cmp == 0) {
+				// Alter Wert wir durch neuen Wert ersetzt
+				tree.value = value;
+			} else if (cmp < 0) // Einfügen im linken Teilbaum
+				tree.left = insertNode(key, value, tree.left);
+			else // Einfügen im rechten Teilbaum
+				tree.right = insertNode(key, value, tree.right);
+		}
+
+		return tree;
+	}
+
+	/**
+	 * Einfügen eines Paares (key,value) in den Binärbaum Ist der Schlüssel key
+	 * schon vorhanden, wird der alte Wert durch den Wert value ersetzt.
+	 */
+	void put(Comparable key, Object value) {
+		if (key != null && value != null)
+			this.root = insertNode(key, value, this.root);
+	}
+
+	/*
+	 * Bestimmung des Elternknotens des symmetrischen Nachfolgers des Knotens
+	 * tree
+	 *
+	 * Der symmetrische Nachfolger eines Knotens, ist der Knoten mit dem
+	 * kleinsten Schlüssel, der größer als der Schlüssel des Knotens tree ist.
+	 * Dieser ist der am weitesten links stehende Knoten im rechten Teilbaum des
+	 * Knotens tree.
+	 */
+	private Node parentSymSucc(Node tree) {
+		Node result;
+
+		result = tree;
+		if (result.right.left != null) {
+			result = result.right;
+			while (result.left.left != null)
+				result = result.left;
+		}
+
+		return result;
+	}
+
+	/*
+	 * Rekursives Verfahren zum Entfernen eines Knotens zu einem vorgegebenen
+	 * Schlüssel im Binärbaum mit dem Wurzelknoten tree. Als Ergebnis wir ein
+	 * Baum zurückgeliefert, der den Schlüssel key nicht mehr enthält.
+	 */
+	private Node removeNode(Comparable key, Node tree) {
+		if (tree != null) {
+			int cmp = key.compareTo(tree.key);
+			if (cmp < 0) // Entfernen im linken Teilbaum
 				tree.left = removeNode(key, tree.left);
-			else if (cmp>0)	// Entfernen im rechten Teilbaum
+			else if (cmp > 0) // Entfernen im rechten Teilbaum
 				tree.right = removeNode(key, tree.right);
-			else
-			{
+			else {
 				// zu entfernender Knoten gefunden
 				this.size--;
-				if (tree.left==null)
-					tree = tree.right;	// Fall 1: siehe Skript
-				else if (tree.right==null)
-					tree = tree.left;	// Fall 2: siehe Skript
-				else
-				{
+				if (tree.left == null)
+					tree = tree.right; // Fall 1: siehe Skript
+				else if (tree.right == null)
+					tree = tree.left; // Fall 2: siehe Skript
+				else {
 					// Knoten besitzt zwei Kindknoten
 					Node p = parentSymSucc(tree);
-					if (p==tree)		// Fall 3: siehe Skript
+					if (p == tree) // Fall 3: siehe Skript
 					{
 						tree.key = p.right.key;
 						tree.value = p.right.value;
 						p.right = p.right.right;
-					}					// Fall 4: siehe Skript
-					else
-					{
+					} // Fall 4: siehe Skript
+					else {
 						tree.key = p.left.key;
 						tree.value = p.left.value;
 						p.left = p.left.right;
 					}
 				}
-			}			
+			}
 		}
-		
+
 		return tree;
 	}
-	
+
 	/**
 	 * Entfernen eines Eintrags im Binärbaum zu einem vorgegebenen Schlüssel
 	 */
-	void remove(Comparable key)
-	{
-		if (key!=null)
+	void remove(Comparable key) {
+		if (key != null)
 			this.root = removeNode(key, this.root);
 	}
-	
+
 	/*
-	 * Rekursives Verfahren zur Ausgabe der Paare (Schlüssel,Wert)
-	 * sortiert nach aufsteigender Reihenfolge der Schlüsseln
-	 * durch einen Inorder-Durchlauf durch den Binärbaum
+	 * Rekursives Verfahren zur Ausgabe der Paare (Schlüssel,Wert) sortiert nach
+	 * aufsteigender Reihenfolge der Schlüsseln durch einen Inorder-Durchlauf
+	 * durch den Binärbaum
 	 */
-	private void inorderPrint(Node tree)
-	{
-		if (tree!=null)
-		{
+	private void inorderPrint(Node tree) {
+		if (tree != null) {
 			inorderPrint(tree.left);
-			System.out.println("("+tree.key+","+tree.value+")");
+			System.out.println("(" + tree.key + "," + tree.value + ")");
 			inorderPrint(tree.right);
-	    }
-	} 
-	
-	/** 
-     * Ausgabe der Paare (Schlüssel,Wert) sortiert nach aufsteigender
-     * Reihenfolge der Schlüssel
-     */ 	 
-	void print()
-	{
+		}
+	}
+
+	/**
+	 * Ausgabe der Paare (Schlüssel,Wert) sortiert nach aufsteigender
+	 * Reihenfolge der Schlüssel
+	 */
+	void print() {
 		System.out.println("Liste der Einträge");
 		System.out.println("------------------");
 		inorderPrint(this.root);
