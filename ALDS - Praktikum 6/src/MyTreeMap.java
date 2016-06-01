@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * Implementierung eines binären Suchbaums
@@ -78,16 +78,15 @@ public class MyTreeMap {
 	 * Hilfe eines iterativen Algorithmus Die Operation setzt voraus, dass key
 	 * ungleich null ist.
 	 */
-	private Node getNodeIt(Comparable key, Node tree) 
-	{
+	private Node getNodeIt(Comparable key, Node tree) {
 		if (tree == null) {
 			return null;
 		}
-		
-		Node result0 = tree;	
-		
+
+		Node result0 = tree;
+
 		while (result0 != null) {
-			
+
 			int comp = key.compareTo(result0.key);
 			if (comp == 0)
 				return result0;
@@ -96,9 +95,9 @@ public class MyTreeMap {
 			} else {
 				result0 = result0.right;
 			}
-			
+
 		}
-		
+
 		return result0;
 	}
 
@@ -127,11 +126,20 @@ public class MyTreeMap {
 	}
 
 	private boolean containsValueRec(Object o, Node tree) {
-		boolean result = false;
 
-		// Hier Lösung einfügen
+		if (tree == null) // Baum ist leer
+			return false;
+		else {
+			if (tree.value == o) {
+				return true;
+			}
+			if (containsValueRec(o, tree.left))
+				return true;
+			if (containsValueRec(o, tree.right))
+				return true;
+		}
 
-		return result;
+		return false;
 	}
 
 	/*
@@ -248,6 +256,60 @@ public class MyTreeMap {
 			System.out.println("(" + tree.key + "," + tree.value + ")");
 			inorderPrint(tree.right);
 		}
+	}
+	
+	void heigth() {
+		System.out.println("Baumhöhe: " + height(this.root));
+	}
+	
+	private int height(Node tree) {
+		int height = 0;
+		if (tree == null)
+			return 0;
+		
+		if (tree.left == null && tree.right == null)
+			return 0;
+		else
+			height++;
+		
+		int height_left = height(tree.left);
+		int height_right = height(tree.right);
+		
+		if (height_left > height_right)
+			height += height_left;
+		else if (height_left < height_right)
+			height += height_right;
+		else
+			height += height_left;
+		
+		return height;
+		
+	}
+	
+	List<Node> getLeaves() {
+		return getLeaves(this.root);
+	}
+	
+	private List<Node> getLeaves(Node tree) {
+		List<Node> leaves = new ArrayList<Node>();
+		
+		if (tree == null)
+			return null;
+		
+		if (tree.left == null && tree.right == null)
+			leaves.add(tree);
+		else {
+			if (tree.left != null)
+				for (Node leav : getLeaves(tree.left)) {
+					leaves.add(leav);
+				}
+			if (tree.right != null)
+				for (Node leav : getLeaves(tree.right)) {
+					leaves.add(leav);
+				}
+		}
+		
+		return leaves;
 	}
 
 	/**

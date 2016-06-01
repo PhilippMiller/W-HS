@@ -1,3 +1,5 @@
+import java.util.List;
+
 class TreeTest
 {
 	public static void main(String[] args)
@@ -20,5 +22,10 @@ class TreeTest
 		dictionary.remove("tree");
 		System.out.println(dictionary.size());
 		dictionary.print();
+		
+		dictionary.heigth();
+		List leaves = dictionary.getLeaves();
+		if (leaves != null)
+			System.out.println("Leaves: " + dictionary.getLeaves().size());
 	}
 }
